@@ -1,0 +1,5 @@
+Texas_General_Election_Candidates_2002-2010.tab (text/tab-separated-values) 62349 bytes.
+Texas_General_Election_Results_2002-2010.tab (text/tab-separated-values) 4684962 bytes.
+Texas_Normal_Vote_2002-2010.tab (text/tab-separated-values) 2070734 bytes.
+texas_readme.txt (text/plain; charset=US-ASCII) 1887 bytes.
+Texas_Shapefile.zip (application/zip) 47558318 bytes.

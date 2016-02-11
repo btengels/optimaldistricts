@@ -1,0 +1,9 @@
+ne_final.dbf (application/octet-stream) 1780338 bytes.
+ne_final.prj (text/plain; charset=US-ASCII) 145 bytes.
+ne_final.sbn (application/octet-stream) 16332 bytes.
+ne_final.sbx (application/octet-stream) 1236 bytes.
+ne_final.shp (application/octet-stream) 6705656 bytes.
+ne_final.shx (application/octet-stream) 13316 bytes.
+ne_final.tab (text/tab-separated-values) 925300 bytes.
+NE_notes.rtf (text/plain; charset=US-ASCII) 26475 bytes.
+NE_Shapefile.zip (application/zip) 3767023 bytes.

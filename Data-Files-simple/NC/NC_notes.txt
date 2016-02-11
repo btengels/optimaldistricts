@@ -1,0 +1,40 @@
+Date provided by North Carolina General Assembly.
+
+http://ftp.legislature.state.nc.us/gis/randr07/Base_Data/BaseData2011.html
+
+
+use "C:\Users\jrodden\Dropbox\Sloan\NC\nc_redist_db.dta", clear
+
+gen dshare_audit04 =  el04g_ad_d/( el04g_ad_d+ el04g_ad_r)
+
+gen dshare_gov04 =  el04g_ad_d/( el04g_gv_d+ el04g_gv_r)
+
+gen dshare_pres04 =  el04g_pr_d/( el04g_pr_d+ el04g_pr_r)
+
+gen dshare_sen04 =  el04g_uss_d/( el04g_uss_d+ el04g_uss_r)
+
+gen dshare_ag08 =  el08g_ag_d/( el08g_ag_d+ el08g_ag_r)
+
+gen dshare_ca08 =  el08g_ca_d/( el08g_ca_d+ el08g_ca_r)
+
+gen dshare_cl08 =  el08g_cl_d/( el08g_cl_d+ el08g_cl_r)
+
+gen dshare_gov08 =  el08g_gv_d/( el08g_gv_d+ el08g_gv_r)
+
+gen dshare_pres08 =  el08g_pr_d/( el08g_pr_d+ el08g_pr_r)
+
+gen dshare_sen08 =  el08g_uss_d/( el08g_uss_d+ el08g_uss_r)
+
+gen dshare_sen10 =  el10g_uss_d/( el10g_uss_d+ el10g_uss_r)
+
+gen av = (dshare_audit04 + dshare_gov04 + dshare_pres04 + dshare_sen04 + dshare_ag08 + dshare_ca08 + dshare_cl08 + dshare_gov08 + dshare_pres08 + dshare_sen08 + dshare_sen10)/11
+
+gen ndv = av*el08g_pr_tot
+gen nrv = (1-av)*el08g_pr_tot 
+
+saveold "C:\Users\jrodden\Dropbox\Sloan\NC\nc_redist_db_calc_old.dta"
+
+The variable called vtd_key links up with geod10.
+
+For variable definitions, see Field_Layout_2011.pdf
+

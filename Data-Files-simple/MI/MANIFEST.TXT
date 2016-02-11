@@ -1,0 +1,3 @@
+mi_geo_merged.csv (text/plain; charset=US-ASCII) 1141760 bytes.
+mi_notes.txt (text/plain; charset=US-ASCII) 820 bytes.
+MI_Shapefiles.zip (application/zip) 10048989 bytes.

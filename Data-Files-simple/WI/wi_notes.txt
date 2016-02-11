@@ -1,0 +1,48 @@
+** All data downloaded from http://legis.wisconsin.gov/ltsb/redistricting/2008_election_data.htm
+** We merged 2002 through 2008, which had the same number of rows.
+** The resulting file was saved in stata forma, and the following calculations were made:
+
+
+use "C:\Users\jrodden\Dropbox\Sloan\WI\WI_redist.dta", clear
+
+
+gen dpct_pres08 = presdem08/ (presdem08+presrep08)
+gen dpct_asm = asmdem08/ (asmdem08 + asmrep08)
+gen dpct_sen08 = sendem08/ (sendem08+senrep08)
+gen dpct_con08 = condem08/ (condem08+conrep08)
+
+gen dpct_gov06 = gov_06dem/(gov_06dem + gov_06rep)
+gen dpct_ag06 = ag_06dem/(ag_06dem + ag_06rep)
+gen dpct_trs06 = trs_06dem/(trs_06dem + trs_06rep)
+gen dpct_sec06 = sec_06dem/(sec_06dem + sec_06rep)
+gen dpct_sen06 = sen_06dem/(sen_06dem + sen_06rep)
+gen dpct_asm06 = asm06d/(asm06d + asm06r)
+gen dpct_ss06 = ss06d/(ss06d + ss06r)
+gen dpct_da06 = da06d/(da06d+da06r)
+gen dpct_con06 = con06d/(con06d+con06r)
+
+gen dpct_pres04 = pres_04dem/(pres_04dem + pres_04rep)
+gen dpct_ush04 =ush_04dem/(ush_04dem + ush_04rep)
+gen dpct_wss04 = wss_04dem/(wss_04dem + wss_04rep)
+gen dpct_wsa04 = wsa_04dem/(wsa_04dem + wsa_04rep)
+gen dpct_cda04 = cda_04dem/(cda_04dem + cda_04rep)
+gen dpct_uss04 = uss_04dem/(uss_04dem + uss_04rep)
+
+gen dpct_gov02 = gov_02dem/(gov_02dem + gov_02rep)
+gen dpct_ag02 = ag_02dem/(ag_02dem + ad_02rep)
+gen dpct_trs02 = trs_02dem/(trs_02dem + trs_02rep)
+gen dpct_asm02 = asm_02dem/(asm_02dem + asm_02rep)
+gen dpct_con02 = con_02dem/(con_02dem + con_02rep)
+gen dpct_sos02 = sos_02dem/(sos_02dem + sos_02rep)
+
+gen av = (dpct_pres08 + dpct_gov06 + dpct_ag06 + dpct_trs06 + dpct_sec06 + dpct_pres04 + dpct_uss04)/7
+
+
+gen ndv = av*pres08t
+gen ndr = (1-av)*pres08t
+
+save "C:\Users\jrodden\Dropbox\Sloan\WI\WI_redist_newvars.dta"
+saveold  "C:\Users\jrodden\Dropbox\Sloan\WI\WI_redist_newvars_old.dta"
+
+** Then save this as excel for release, and make sure variables are in proper format.  Then create DBF.  
+

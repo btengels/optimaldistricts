@@ -1,0 +1,170 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fnil\fcharset0 Monaco;\f1\fnil\fcharset0 Calibri;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww7480\viewh7640\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 \
+Files: \
+-"nd_geo" - 2010 Census voting districts file\
+-"2008_votes" - File with 2008 precinct vote returns\
+-"nd_merge_1017" - Merged file \
+\
+Matching summary:\
+All 519 (out of 519) Census Voting Districts have been matched with a 2008 vote return. Precincts in a number of small counties were combined and allocated by VAP due to reprecincting. \
+\
+I stacked county level shape files from the Census 2010 Web site to create the boundary files. There are three precincts in which the vote totals are slightly higher than the voting age population. \
+\
+\
+Variable Names: \
+-nd_geo_id - row identifier from raw Census VTD file\
+-nd_vote_id - row identifier from raw vote total file\
+-VAP - Voting Age Population from Census FTP\
+-Pop100 - full population from Census FTP\
+-STATEFP10 - state code from census\
+-COUNTYFP10 - county code from census\
+-VTDST10 - voting district code from census\
+-GEOID10 - geo identifier from census\
+-VTDI10 - voting code from census\
+-Name10 - voting district identifier\
+-ALAND10 - land\
+-AWATER10 - water\
+-INTPLAT10 - latitude\
+-INTPTLON10 - longitude\
+-LogRecNo - Census FTP identifier\
+-nd_agg - cumulative VAP for precincts where totals were summed and allocated by VAP to VTDs\
+-fraction - VAP/nd_agg\
+-Precinct - precinct code from ND SOS\
+-gov_tot_08 - total votes, 2008 Gubernatorial\
+-gov_r_08 - total Republican votes, 2008 Gubernatorial\
+-gov_d_08 - total Democratic votes, 2008 Gubernatorial\
+-usp_r_08 - total Republican votes, 2008 President\
+-usp_d_08 - total Democratic votes, 2008 President\
+-ush_r_08 - total Republican votes, 2008 U.S. House\
+-ush_d_08 - total Democratic votes, 2008 U.S. House\
+-g_08 - Democratic percent, 2008 Gubernatorial\
+-usp_08 - Democratic percent, 2008 President\
+-ush_08 - Democratic percent, 2008 House\
+-av_08 - Democratic percent, 2008 average\
+-NDV - Normal Democratic votes\
+-NRV - Normal Republican votes \
+\
+\
+\
+\
+Matching notes: \
+\
+Adams: \
+1 to 39-01, 39-02 and 39-03\
+\
+Cass: \
+9-1 (vote id 86) to 11-01\
+9-1 (vote id 87) to 13-01\
+9-1 (vote id 88) to 20-01\
+9-1 (vote id 89) to 21-01\
+9-1 (vote id 90) to 22-01\
+9-1 (vote id 91) to 27-01\
+9-1 (vote id 92) to 41-01\
+9-1 (vote id 93) to 44-01\
+9-1 (vote id 94) to 45-01\
+9-1 (vote id 95) to 46-01\
+9-2 (vote id 96) to 11-02\
+9-2 (vote id 97) to 13-02\
+9-2 (vote id 98) to 20-02\
+9-2 (vote id 99) to 21-02\
+9-2 (vote id 100) to 22-02\
+9-2 (vote id 101) to 27-02\
+9-2 (vote id 102) to 41-02\
+9-2 (vote id 103) to 44-02\
+9-2 (vote id 104) to 45-02\
+9-2 (vote id 105) to 46-02\
+9-3 (vote id 106) to 13-03\
+9-3 (vote id 107) to 45-06 - not 100% sure\
+9-3 (vote id 108) to 22-03\
+9-3 (vote id 109) to 27-03\
+9-4 (vote id 110) to 22-04\
+9-4 (vote id 111) to 27-04\
+9-5 (vote id 112) to 22-05\
+9-5 (vote id 113) to 27-05\
+9-6 (vote id 114) to 22-06\
+9-7 (vote id 115) to 22-07\
+9-8 (vote id 116) to 22-08\
+9-9 (vote id 117) to 22-09\
+9-10 (vote id 118) to 22-10\
+9-11 (vote id 119) to 22-11\
+9-12 (vote id 120) to 22-12 \
+\
+\
+\
+Dunn: \
+Very small county. I could not match vote returns and VTDs. 11 vote precincts were summed and allocated by VAP. \
+\
+McKenzie: \
+(http://county.mckenziecounty.net/usrfiles/precinct_map.pdf)\
+1 to 4-1\
+2 to 39-07\
+3 to 39-03\
+4 to 39-04\
+5 to 39-05\
+6 to 39-06\
+7 to 4-2 (low ratio)\
+8 to 39-08\
+9 to 39-09\
+10 to 39-10\
+12 to 39-12\
+13 to 39-13\
+14 to 39-14\
+15 to 39-11\
+\
+Mercer: \
+14 to 7. correspondence with auditor was not helpful. \
+\
+\
+Pembina: \
+1 to 10-01; 2 to 10-02; 3 to 10-03; 4 to 10-04; 5 to 10-05; 6 to 16-01 \
+\
+\
+\
+Richland - \
+Per correspondence with Harris Bailey of the county auditor's office\
+\
+49 (eagle) to 25-11
+\f1 381
+\f0 \
+37 (district 25) to 25-01\
+37 (district 26) to 26-16\
+38 (district 25) to 25-02\
+38 (district 26) to 36-17\
+39 to 25-03\
+41 to 25-04\
+42 to 26-05\
+43 to 26-06\
+45 to 26-07\
+46 to 25-08\
+47 to 26-09\
+48 (district 25) to 25-10\
+48 (district 26) to 26-18\
+51 to 25-12\
+52 to 25-13\
+53 to 25-14\
+54 to 25-15\
+\
+\
+Sheridan: \
+6 to 2 - summed and allocated\
+\
+Ward:  \
+Ward 9 and 10 have low vote to VAP ratios because of Minot Air Force Base\
+21 to 40-21 and 40-33\
+29 and 31 to 5-29, 5-31, and 38-31\
+28 and 32 to 5-28 and 5-32\
+http://www.co.ward.nd.us/UserFiles/File/Auditor_Treasurer/2002%20Precincts%20Low-res%20(1).jpg\
+\
+\
+Wells - 1 and 5 to 1; 2 and 6 to 2\
+(https://mylocalgov.com/wellscountynd/ShowImage.asp?thumb=0&rowid=455&show=0)\
+\
+\
+\
+\
+}

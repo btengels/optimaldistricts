@@ -1,0 +1,1007 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww9220\viewh8640\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+
+\f0\fs24 \cf0 Nebraska - April 12, 2011 and April 13, 2011, and July 11, 2011\
+\
+Matching summary: \
+1,650 out of 1,652 Census Voting districts were matched with a precinct vote total. See extensive notes on precinct naming below. \
+\
+Vote total file: \
+The precinct variable is a simple count here. There is no additional information. 200 absentee and early vote rows, tallied at the county level, have been omitted.\
+\
+\
+Variable names: \
+\
+-ne_geo_id - row identifier from raw Census VTD file\
+-ne_vote_id - row identifier from raw vote total file\
+-VTDST10 - voting district code from census\
+-STATEFP10 - state code from census\
+-COUNTYFP10 - county code from census\
+-GEOID10 - geo identifier from census\
+-VTDI10 - voting code from census\
+-Name10 - voting district string - best description\
+-NameLSAD10 - voting district string, with ``voting district at end\
+-ALAND10 - land\
+-AWATER10 - water\
+-INTPLAT10 - latitude\
+-INTPTLON10 - longitude\
+-VAP - Voting Age Population from Census FTP\
+-Pop100 - full population from Census FTP\
+-ne - cumulative VAP for precincts where totals were summed and allocated by VAP to VTDs\
+-fraction - VAP/ne_agg\
+\pard\pardeftab720\ql\qnatural\pardirnatural
+\cf0 -county          str12  %12s                   	County Name\
+-precinct        str27  %27s                  	Precinct Name (2008)\
+-cd_06           float  %9.0g                	US House District # in 2006  \
+-sld_06          float  %9.0g                      State Legislative District # in 2006\
+-treas_dvote_06  float  %9.0g              Total D Votes for Treasurer in 2006\
+-treas_rvote_06  float  %9.0g 	Total R Votes for Treasurer in 2006\
+-treas_total_06  float  %9.0g 		Total Votes for Treasurer in 2006\
+-uss_dvote_06    float  %9.0g		 Total D Votes for US Senate in 2006\
+-uss_rvote_06    float  %9.0g   	 Total R Votes for US Senate in 2006               \
+-uss_total_06    float  %9.0g 		 Total Votes for US Senate in 2006                 \
+-ush_dvote_06    float  %9.0g  	 Total D Votes for US House in 2006                \
+-ush_rvote_06    float  %9.0g     	 Total R Votes for US House in 2006                             \
+-ush_total_06    float  %9.0g       	 Total Votes for US House in 2006                           \
+-gov_dvote_06    float  %9.0g 		Total D Votes for Governor in 2006\
+-gov_rvote_06    float  %9.0g 		Total R Votes for Governor in 2006\
+-gov_total_06    float  %9.0g 		Total  Votes for Governor in 2006\
+-ss_dvote_06     float  %9.0g 		Total D Votes for Sec of State in 2006                 \
+-ss_rvote_06     float  %9.0g 		Total R Votes for Sec of State in 2006\
+-ss_total_06     float  %9.0g 		Total Votes for Sec of State in 2006\
+-audit_dvote_06  float  %9.0g		Total D Votes for Auditor in 2006                                   \
+-audit_rvote_06  float  %9.0g 	Total R Votes for Auditor in 2006                                                \
+-audit_total_06  float  %9.0g 		Total  Votes for Auditor in 2006                                              \
+-ag_dvote_06     float  %9.0g        	Total D Votes for Ag Comm in 2006                                             \
+-ag_rvote_06     float  %9. 0g        	Total R Votes for Ag Comm in 2006                                             -ag_total_06     float  %9. 0g        	Total Votes for Ag Comm in 2006                                             -precinct_06     str10  %10s                   Precinct label in 2006\
+year            float  %9.0g                  	\
+-cd_08           float  %9.0g                  	Congressional District 2008\
+-sld_08          float  %9.0g                  \
+-pres_dvote_08   float  %9.0g   	 Total D Votes for President in 2008\
+-pres_rvote_08   float  %9.0g                  Total R Votes for President in 2008\
+-pres_total_08   double %9.0g                  Total Votes for President in 2008\
+-uss_dvote_08    float  %9.0g                  Total D Votes for US Senate in 2008\
+-uss_rvote_08    float  %9.0g         Total R Votes for US Senate in 2008\
+-uss_total_08    float  %9.0g          Total  Votes for US Senate in 2008\
+-ush_dvote_08    float  %9.0g                  Total D Votes For House in 2008\
+-ush_rvote_08    float  %9.0g                  Total R Votes for House in 2008\
+-ush_total_08    float  %9.0g                  Total Votes for House in 2008\
+-precinct_n      float  %9.0g                  \
+-ush_tvote_08    float  %9.0g                  \
+-pres_tvote_08   float  %9.0g                  \
+-uss_tvote_08    float  %9.0g                  \
+-precinct_old    str26  %26s 		Old Precinct Name (2008)    \
+-precinct_08     str10  %10s		Precinct Name (2008)         \
+-prec_n          float  %9.0g                  \
+-prec            str2   %9s                    \
+-dp_tr_06        float  %9.0g                  \
+-dp_us_06        float  %9.0g                  \
+-dp_uh_06        float  %9.0g                  \
+-dp_gv_06        float  %9.0g                  \
+-dp_ss_06        float  %9.0g                  \
+-dp_au_06        float  %9.0g                  \
+-dp_ag_06        float  %9.0g                  \
+-dp_up_08        float  %9.0g                  \
+-dp_us_08        float  %9.0g                  \
+-dp_uh_08        float  %9.0g                  \
+-av_0608              float  %9.0g                  Average Democratic Percent\
+-NDV_0608             float  %9.0g                  Normal Number of Democratic Votes\
+-NRV_0608             float  %9.0g                  Normal Number of Republican Votes\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\ql\qnatural\pardirnatural
+\cf0 \
+\
+\
+County by county notes: \
+\
+Adams: \
+Received attachment from Chrisella Lewis\
+\
+Antelope: \
+Received attachment from Janet Dietz\
+\
+Arthur: \
+one precinct\
+\
+Banner:\
+one precinct\
+\
+Blaine:\
+one precinct\
+\
+Boone: \
+This reference (http://www.co.boone.ne.us/pdfs/election/voting_precincts.pdf). Precinct 1-9 in alphabetical order, according to abbreviation. Votes/VAP ratio checks out for all precincts\
+1-bne-boone\
+2-bvr-beaver\
+3-ce-cedar\
+4-db-dublin bonanza\
+5-nbsc-north branch/shell creek\
+6-nm-north manchester\
+7-oak-oakland\
+8-sem-southeast manchester\
+9-swm-southwest manchester\
+\
+\
+Box Butte: \
+1 to alliance 1\
+2 to alliance 2\
+3 to alliance 3\
+4 to alliance 4\
+5 to alliance 5\
+6 to alliance 6\
+11 to 11 precinct\
+15 to 15 precinct\
+Votes/VAP ratio checks out for all \
+\
+Boyd: \
+three precincts summed and allocated by VAP to three in VTD\
+\
+Brown: \
+1 to 3/ainsworth\
+2 to 1/city of ainsworth\
+3 to 3/pines\
+Votes/VAP ratio checks out for all \
+\
+Buffalo:\
+\
+This pdf provides a correspondence between the numbered precincts and the strings in the VTD file (http://www.buffalocounty.ne.gov/Offices/Election/images/CountySupervisorMap.pdf)\
+\
+City precincts are 1-17, rural precincts are 24-30 and the townships make up the remainder. \
+\
+Precinct 32 contains no votes.\
+\
+\
+Burt county - \
+This reference (http://www.burtcounty.ne.gov/election.html)\
+1 to arizona\
+2 to bellcreek\
+3 to craig\
+4 to decautr\
+5 to everett\
+6 to lyons\
+7 to oakland 1\
+8 to oakland 2\
+9 to silver creek\
+10 to tekamah 1\
+11 to tekamah 2\
+Votes/VAP ratio checks out for all \
+\
+\
+\
+Butler:\
+This reference (http://www.co.butler.ne.us/webpages/election/polling_places.html) lists polling places but provides no order. Call County Clerk at 402-367-7430\
+\
+Per conversation with county clerk\
+\
+Call County Clerk at 402-367-7430\
+\
+1 to linwood\
+2 to bone creek\
+3 to savannah\
+4 to alexis \
+5 to summit\
+6 to olive \
+7 to franklin\
+8 to skull creek\
+9 oak creek\
+10 to center\
+11 to union\
+12 to reading\
+13 to read\
+14 to ulysses \
+15 to plum creek\
+16 to richardson\
+17 to platte\
+18 to david city 1\
+19 to david city 2\
+20 to david city 3\
+\
+\
+Cass: \
+\
+This reference (http://www.cassne.org/ElectionPDFs/polling%20placesPct_pacs.pdf)\
+Also, 5 to Elmwood and 2 to Greenwood\
+\
+Cedar: \
+\
+1 through 15 matched with Precincts 1 through 15 in VTD\
+Votes/VAP ratio checks out for all \
+\
+Chase: \
+\
+This reference provides an order at the top (http://www.co.chase.ne.us/election.html)\
+\
+1 to champions\
+2 to imperial east\
+3 to imperial west\
+4 to imperial rural \
+5 to wauneta\
+Votes/VAP ratio checks out for all \
+\
+\
+Cherry: \
+no info available\
+\
+These are far and away the largest precincts in the county.\
+16 to East Valentine\
+17 to North Valentine\
+18 to South Valentine\
+\
+Since Valentine is 16-18 out of 20 precincts, I figured out that precincts are numbered in alphabetical order. Votes/VAP ratio checks out for all. \
+\
+Thus, \
+1 is barley\
+2 is cleveland\
+3 is cody\
+4 is crookston\
+5 is gillaspie\
+6 is goose creek\
+7 is kennedy\
+8 is kilgore\
+9 is king\
+10 is lackey\
+11 is loup\
+12 is merriman\
+13 is mother lake\
+14 is nenzel\
+15 is russell \
+19 is wells\
+20 is wood lake\
+\
+-5, 7, and 15 were summed and allocated by VAP to gillaspie, kennedy and russell. \
+\
+Cheyenne: \
+1-5 is Sidney 1 through Sidney 5\
+6 is gurley\
+7 is lodgepole\
+8 is potter\
+9 is union\
+\
+\
+Clay: \
+Searching for pdf of elections form. \
+\
+Colfax: \
+1a through 6a to 1 through 6 in VTD\
+\
+Cuming: \
+Appear to be in alpha order. Votes/VAP ratio checks out for all \
+\
+1 to bancroft\
+2 to beemer \
+3 to st. charles\
+4 to SW 4\
+5 to west point 2\
+6 to west point 3\
+7 to wisner\
+\
+\
+Custer: \
+Correspondence with Linda Miller in county clerk's office\
+-1 is algernan \
+-2 is arnold city precinct\
+-3 is arnold precinct\
+-4 & 23 are Hayes II and Hayes I, respectively  - these were combined TO Hayes precinct in VTD\
+-5 to ansley precinct\
+-6 to broken bow north\
+-7 is north rural broken bow precinct\
+-8 is broken bow south\
+-9 is broken bow southwest\
+-10 is berwyn\
+-11 to custer\
+-12 to east center precinct\
+-13 is cliff\
+-14 to comstock\
+-15 to douglas grove\
+-16 to spring creek\
+-17 to delight\
+-18 to elk creek\
+-19 to elim\
+-20 to triumph\
+-21 to garfield\
+-22 to grant\
+-24 to kilfoil\
+-25 to loup\
+-26 to lillian\
+-27 to milburn\
+-28 to corner\
+-29 to rural sergeant\
+-30 to west union\
+-31 to sergeant east and sergeant west\
+-32 to myrtle\
+-33 to westerville\
+-34 to ryno precinct\
+-35 to victoria precinct\
+-36 to wood river precinct\
+-37 to waye precinct\
+-38 to broken bow northwest\
+-39 to south rural broken bow\
+\
+\
+Dakota: \
+Informative precinct string in vote file\
+\
+Dawes: \
+Precincts 1 through 11 to #1 through #11 in VTD. Votes/VAP ratio checks out for all \
+No match for Precinct 4C in VTD. \
+\
+Dawson: \
+Received document from Cheri Bellamy. Numbered in alpha order. Votes/VAP ratio checks out for all. \
+ \
+Deuel: \
+Deuel 1, 2, and 3 were summed and allocated to Big Springs, Chappell and Swan. We could not find correspondence files for the county. \
+\
+Dixon: \
+Emailed attachment from the county clerk \
+\
+Dodge: \
+Correspondence with Sharon in the clerk's office\
+\
+Sharon - \
+-the first 20 were fremont\
+-21 north bend\
+-22 scribner\
+-23 cuming\
+-24 webster\
+-25 pebble\
+-26 platte east\
+-27 platte west\
+-28 nickerson\
+-29 everett \
+-30 city of hooper\
+-31 logan\
+-32 elkhorn\
+-33 maple\
+-34 hooper two (own voting precinct)\
+-35 union\
+-36 ridgeley\
+-37 pleasant valley \
+-38 cotterell\
+-snyder is half in pebble and half in webster\
+-2010 has the same precinct numbering system \
+\
+-23 & 29 combined TO cuming-everett precinct\
+-31 & 34 combined TO logan-hooper precinct\
+-28 & 33 combined TO maple-nickerson precinct\
+-35 through 38 to ridgeley-union-cotterrell precinct\
+\
+\
+\
+Douglas: \
+Precinct x-xx in the Census voting district file matches the precinct column in the vote total file. (350 rows)\
+\
+-The following vote total precincts are unpopulated and have no match in the Census VTD file - 107, 108, 131, 135, 136, 137, 205, 223, 230, 302, 305, 318, 322, 323, 327, 331, 405, 416, 417, 418, 419, 435, 508, 524, 525, 526, 527, 528, 619, 620, 621, 623, 633, 634, 635, 636, 637, 638, 639, 640, 711, 715, 725, 727, 730, 744, 810, 811, 813, 814, 815, 845, 857, 873\
+\
+-The following vote total precincts are populated and have no match in the Census VTD file - 827, 836, 837, 852, 879\
+\
+-420 to precinct 4-20 and 420-2\
+-426 to precinct 4-26 and 426-2\
+-537, 538, 823 summed and allocated by VAP to 5-37, 5-38, 5-51, 8-22 and 8-23\
+-539, 541, 819, 821 summed and allocated by VAP to 5-39, 5-41, 5-40, 8-19, 8-20 and 8-21\
+-601 and 870 summed and allocated by VAP to 6-1, 6-59 and 8-70\
+-705 to precinct 7-5, 7-52 and 7-53\
+-713 to precinct 7-13-1 and precinct 7-13-2\
+-722, 724, 851, 853 summed and allocated by VAP to 7-22, 7-24, 7-54, 8-51, 8-53\
+-828 to precinct 8-28 and 8-28-1\
+-856 to precinct 8-56 and precinct 8-56-3\
+-861 to precinct 8-61, precinct 8-61-06 and precinct 8-61-4\
+-869 to precinct 8-69 (x2)\
+-No match for precinct 5-51, precinct 6-60 in VTD\
+\
+-820 and 822 were not matched because the votes/VAP ratio was higher than 1. \
+\
+\
+Dundy: \
+There are four precincts in the vote total file and three in the Census VTD file. Precincts 3 & 4, which have low populations, have been combined TO district 3 in the VTD file\
+\
+Fillmore: \
+-Precincts 101 through 110 match with #101 through #110 in the VTD file\
+\
+Franklin:\
+-These four precincts were allocated based on votes/VAP ratio. \
+-Franklin 1 to Campbell\
+-Franklin 2 to East Franklin\
+-Franklin 3 to West Franklin\
+-Franklin 4 to Hildreth\
+\
+Frontier: \
+-matched the five precincts on vote/VAP ratio\
+-1 to eustis\
+-2 to stockville\
+-3 to curtis\
+-4 to maywood \
+-5 to garden prairie\
+\
+Furnas:\
+-Correspondence with Kennis McClelland, the county clerk\
+arapahoe is 1 (all three wards)\
+beaver city is 2\
+cambridge is 3 (all three wards)\
+edison is 4\
+hendley is 5\
+holbrook is 6 \
+oxford is 7\
+wilsonville is 8\
+\
+-1 to arapahoe north ward, arapahoe precinct and arapahoe south ward\
+-2 to beaver city\
+-3 to cambridge precinct, cambridge ward 1, cambridge ward 2, and cambridge ward 3\
+\
+Gage: \
+this reference for Gage (http://www.gagecountynebraska.us/webpages/election/vote_locations.html)\
+There are in alphabetical order\
+\
+1 to adams\
+2 to barneston/liberty\
+3 to blakely\
+4 to island grove\
+6 to clatonia\
+7 to elm/sicily/glenwood/paddock\
+8 to filley/logan\
+9 to glenwood paddock\
+10 to grant/holt\
+11 to hanover/hooker/nemaha\
+12 to highland\
+17 to lincoln/riverside\
+19 to midland\
+23 to rockford/sherman\
+26 to wymore ward 1\
+27 to wymore ward 2\
+28 to beatrice 1-1\
+29 to beatrice 1-2\
+30 to beatrice 1-3\
+31 to beatrice 2-1\
+32 to beatrice 2-2\
+33 to beatrice 2-3\
+34 to beatrice 3-1\
+35 to beatrice 3-2\
+36 to beatrice 3-3\
+37 to beatrice 4-1\
+38 to beatrice 4-2\
+39 to beatrice 4-3\
+\
+\
+Garden: \
+Matched the four precincts based on vote/VAP ratio\
+1 to lisco\
+2 to oshkosh 1\
+3 to lost creek\
+4 to blue creek\
+\
+Garfield: \
+-garfield burwell to ward 1 and ward 2\
+-garfield rural to rural 1 precinct \
+\
+Gosper: \
+1 through 4 to Precinct 1 through Precinct 4\
+ \
+Grant: \
+1 to hyaenas precinct. Only one precinct in county\
+\
+Greeley: \
+This reference (http://www.greeleycounty.ne.gov/pdfs/election/2010_official_general_results.pdf)\
+1 to Scotia\
+2 to Spalding\
+3 to Wolbach 2\
+4 to Greeley\
+\
+Hall: \
+This reference provides a key (http://www.hallcountyne.gov/content.lasso?page=6105)\
+\
+Hamilton: \
+1 through 8 to #1 Precinct through #8 Precinct. \
+9 to aurora 1\
+10 to aurora 2\
+11 to aurora 3\
+-votes to VAP ratio checks out\
+\
+Harlan: \
+-The eight precincts in this county were summed and allocated to eight VTDs by VAP. We could not find the correspondence file.\
+\
+Hayes: \
+1 through 3 with District 1 through District 3\
+\
+Hitchcock: \
+In alpha order\
+1 to culbertson\
+2 to palisade\
+3 to stratton\
+4 to trenton\
+\
+Holt: \
+1 through 8 to Precincts 1 through 8\
+9 to atkinson ward 1\
+10 through 13 to 10P through 13P\
+-votes to VAP ratio checks out\
+\
+Hooker: \
+one precinct\
+\
+Howard: \
+Correspondence with Marge Palmberg, Word Document\
+1 to Ward 1\
+2 to Ward 2\
+3 to Spring Creek\
+4 to Elba\
+5 to Posen\
+6 to Dannebrog\
+7 to Loup Fork\
+8 to St. Libory\
+\
+\
+Jefferson: \
+This reference (http://www.co.jefferson.ne.us/content/election_results). Precincts are in order on far right column at the top\
+1 to ply-gib precinct\
+2 to eur-wash precinct\
+3 to lin-mer-fby-rich\
+4 to cub creek-rock creek\
+5 to jeff-pleas-new\
+6 to buck-ant-end\
+7 to fairbury 1\
+8 to fairbury 2\
+9 to fairbury 3 \
+10 to fairbury 4\
+\
+Johnson: \
+-Correspondence with clerk was not helpful, and correspondence file could not be located. The eight precincts in the vote file were summed and allocated to the six VTDs by VAP. \
+\
+Kearney: \
+-Correspondence with Myra Johnson, the county clerk\
+-1 to lowell\
+-2 to newark \
+-3 to blaine\
+-4 to hayes/logan/sherman\
+-5 to liberty/lincoln/may\
+-6 to eaton\
+-7 to mirage\
+-8 to oneida\
+-9 to cosmo/grant\
+-10 to minden north\
+-11 to minden south\
+-12 to minden center \
+\
+Keith: \
+This reference (http://www.keithcountyne.gov/electionresults2010.htm)\
+-1 to ogallala #1\
+-2 to ogallala #2\
+-3 to ogallala #3\
+-4 to ogallala #4\
+-5 to ogallala #5\
+-6 to brule\
+-7 to logan\
+-8 to lonergan\
+-9 to paxton\
+-10 to ogallala rural one and rural two\
+-11 to whitetail\
+-votes to VAP ratio checks out\
+\
+\
+Keya Paha: \
+-Correspondence with Suzy in county clerk's office\
+-1 is Norden\
+-2 is garfield\
+-3 is custer\
+-4 is mills\
+\
+Kimball: \
+-matched the five precincts on votes/vap ratio\
+-1 to kimball ward 1\
+-2 to kimball ward 2\
+-3 to antelope\
+-4 to bushnell\
+-5 to dix\
+\
+Knox: \
+-1 through 8 to 001 through 008\
+-votes to VAP ratio checks out\
+\
+Lancaster: \
+This reference (http://lancaster.ne.gov/election/prebrkdn.pdf) gives a correspondence between the precinct number in the vote file and the string in the VTD file\
+\
+-9H-2 combined with Grant 4 in VTD file\
+-no match for 711 in vote file (only 2 voters)\
+\
+Lincoln: \
+This reference \
+(http://www.co.lincoln.ne.us/images/PDF/2008general.pdf) lists precincts in order\
+\
+1 through 17 are North Platte wards\
+1 through 6 to P-1 through P-6\
+7 to P-7A\
+8 to P-7B\
+9 through 17 to P-8 through P-16 in the city\
+18 to brady\
+19 to hall\
+20 to hershey\
+21 to hinman\
+22 to maxwell\
+23 to medicine\
+24 to osgood\
+26 to sellers\
+27 to sutherland\
+28 to wallace\
+\
+Logan: \
+one precinct\
+\
+Loup: \
+one precinct\
+\
+Madison: \
+-correspondence with nancy scheer, the county clerk\
+-1 to norfolk 1-1\
+-2 to norfolk 1-2\
+-3 to norfolk 1-3\
+-4 to norfolk 2-1\
+-5 to norfolk 2-2\
+-6 to norfolk 2-3\
+-7 to norfolk 3-1\
+-8 to norfolk 3-2\
+-9 to norfolk 3-3\
+-10 to norfolk 4-1\
+-11 to norfolk 4-2\
+-12 to norfolk 4-3\
+-13 to norfolk\
+-14 to valley\
+-15 to meadow grove-jefferson-grove\
+-16 to tilden 2nd\
+-17 to battle creek city - battle creek\
+-18 to warnerville\
+-19 to union-madison\
+-20 to fairview-kalamazoo-green garden\
+-21 to schoolcraft-emerick-shell creek-newman\
+-22 to madison 1\
+-23 to madison 2\
+\
+McPherson: \
+one precinct\
+\
+Merrick: \
+-Correspondence with Marcia, the clerk. \
+-1 to silver creek\
+-2 to cl east\
+-3 to cl west\
+-4 to pr island\
+-5 to central\
+-6 to lone tree north\
+-7 is midland\
+-8 is mead\
+-9 is chapman\
+-10 is pr creek\
+-11 is vieregg\
+-12 is loup\
+-13 is ward 1\
+-14 is ward 2\
+-15 is lone tree south\
+\
+-4/prairie island was not matched because the votes/VAP ratio was greater than 1. \
+\
+Morrill: \
+-Correspondence with Kathy Brandt\
+- 1 to broadwater\
+- 2 to east camp clarke\
+- 3 to north camp clarke\
+- 4 to west camp clarke\
+- 5 to east bayard\
+- 6 to west bayard\
+- 7 to gilchrist\
+- 8 to haynes\
+- 9 to redington\
+- votes/VAP ratio checks out\
+\
+\
+Nance: \
+-1 to BGCP\
+-2 to CLFWE\
+-3 to CTS\
+-4 to Fullerton\
+-5 to genoa ward 1\
+-6 to genoa ward 2\
+- votes/VAP ratio checks out\
+\
+Nemaha: \
+This reference lists them in order on the header (http://www.nemahacounty.ne.gov/election_files/2010_general_unofficial_results.htm)\
+\
+\
+Nuckolls: \
+They are in alpha order\
+1 to beaver 1\
+2 to beaver 2\
+3 to beaver 3\
+4 to elk\
+5 to hardy\
+6 to nelson\
+7 to spring creek\
+8 to victor\
+\
+\
+Otoe: \
+-correspondence with janene bennett\
+ Precinct number 1 is Berlin, \
+2 \'96 Delaware, \
+3 \'96 Four Mile, \
+4 \'96 McWilliams, \
+5 \'96 N Syracuse, \
+6 \'96 Palmyra, \
+7 \'96 Russell, \
+8 \'96 S Syracuse, \
+9 \'96 So Branch, \
+10 \'96 1\super st\nosupersub  Ward, \
+11 \'96 2\super nd\nosupersub  Ward, \
+12 \'96 3\super rd\nosupersub  Ward A, \
+13 \'96 3\super rd\nosupersub  Ward B, \
+14 \'96 4\super th\nosupersub  Ward A, \
+15 \'96 4\super th\nosupersub  Ward B, \
+16 \'96 4\super th\nosupersub  Ward C\
+\
+Pawnee: \
+-Correspondence with Carol Young\
+1 to Pawnee 1\
+2 to Pawnee 2\
+3 to Burchard\
+4 to Steinauer\
+5 to Table Rock \
+\
+\
+Perkins: \
+1 through 3 to District 1 through District 3\
+\
+Phelps: \
+This is the correspondence file (http://www.phelpsgov.org/pdfs/election/poll_locations.pdf)\
+\
+\
+Pierce: \
+correspondence with shannon \
+-1 to osmond\
+-2 to plainview\
+-3 to pierce rural\
+-4 to hadar\
+-5 to city of pierce\
+\
+Platte: \
+Here is the key for Platte (http://www.plattecounty.net/Election/Voter%20Registrants%20Statistics%20Count%20Report.htm)\
+\
+Polk: \
+This reference (http://www.polkcounty.ne.gov/content/electionresultsgeneral08.html) lists them in order on the header\
+1 to south canada\
+2 to north osceola\
+3 to south osceola\
+4 to east burg\
+5 to West burg\
+6 to west pleasant\
+\
+Red Willow: \
+This key (http://www.co.red-willow.ne.us/content/election_results_by_precinct) lists precinct numbers about 15 rows into the document.\
+\
+Richardson: \
+Not 100% on this matching \
+1 to arago/barada\
+2 to fall city rural/ohio\
+3 to falls city 1\
+4 to falls city 2\
+5 to falls city 3\
+6 to falls city 4\
+7 to franklin/humboldt rural\
+8 to grant/nemaha\
+9 to humboldt 1\
+10 to humboldt 2\
+11 to jefferson/rulo\
+12 to liberty\
+13 to muddy east\
+14 to muddy west/porter\
+15 to salem\
+\
+Rock: \
+1 through 5 to 1st precinct through 5th precinct\
+-votes to VAP ratio checks out\
+\
+Saline: \
+This reference (http://www.co.saline.ne.us/pdfs/election/2008_primary_results.pdf) \
+1 to crete 1\
+2 to crete 2 \
+3 to crete 3\
+4 to c and b\
+5 to dorchester\
+6 to friend 1\
+7 to friend 2\
+8 to wilbur 1 \
+9 to wilbur 2\
+10 to olive\
+11 to south fork\
+12 to dewitt\
+-votes to VAP ratio checks out\
+\
+\
+Sarpy: \
+This document (http://www.sarpy.com/election/results/2008GeneralPrec.htm) contains the precinct numbers and strings for the 87 precincts. \
+\
+Votes/VAP ratio were higher than 1 in Bellevue Second. Therefore, 31, 32, 33, 34, and 82 in the vote file were summed and allocated TO Bellevue Second 1, 2, 3, 4, and 5.\
+\
+Also, votes/VAP ratio shows that Papillion 4-1 and 4-2 are mixed up in the document. 62 is assigned to Papillion 4-2 and 63 is assigned to Papillon 4-1.\
+\
+Saunders: \
+This reference (http://www.saunderscounty.ne.gov/pdfs/election/results/2010_general/2010%20General%20Election%20Results%20-%20Board%20of%20Supervisors%20Dist%201-3-5-7.pdf) contains the precinct numbers and strings\
+\
+-17 to yutan east and yutan west\
+-18 to yutan precinct\
+\
+Scotts Bluff: \
+This refrence (http://www.scottsbluffcounty.org/election/election-polling-places.html)\
+\
+1 to castle rock a\
+2 to castle rock b\
+3 to dewey-tabor\
+4 to east winter creek\
+5 to fanning\
+6 to ford a and b\
+7 to funston\
+8 to gering precinct\
+9 to gering 1\
+10 to gering 2\
+11 to gering 3\
+12 to gering 4\
+13 to highland\
+14 to kiowa-lyman \
+15 to minatare 1 & 2 precinct\
+16 to mitchell rural\
+17 to mitchell 1\
+18 to mitchell 2\
+19 to village of morrill\
+20 to roubadeau precinct\
+21 through 28 to scottsbluff 1 through 8\
+29 to terrytown\
+30 to west winter\
+\
+\
+Seward: \
+Correspondence with sherry schweitzer, county clerk\
+-1 to b\
+-2 to c\
+-3 to e\
+-4 to g\
+-5 to h\
+-6 to i\
+-7 to j\
+-8 to k\
+-9 to m-bx\
+-10 to m-co\
+-11 to o-1\
+-12 to o-2\
+-13 to seward 1\
+-14 to seward 2\
+-15 to seward 3\
+-16 to seward 4\
+-11 (O-1) and 12 (O-2) were combined and allocated by VAP to O, O-1 and O-2 in the VTD file\
+\
+Sheridan: \
+This reference (http://www.sheridancountynebraska.com/archives/novresults.php) is not helpful. The eight precincts in the vote file were summed and allocated to the eight VTDs by VAP. \
+\
+\
+\
+Sherman:\
+This reference (http://www.co.sherman.ne.us/content/election_results_content)  in order on the header\
+\
+1 to ashton precinct\
+2 to rockville\
+3 to north loup\
+4 to central loup\
+5 to south loup\
+6 to harrison \
+-votes over VAP matches up\
+\
+Sioux: \
+1 to bowen\
+2 to sheep creek\
+\
+Stanton: \
+This reference (http://www.co.stanton.ne.us/content/election_results_general) is in order. \
+\
+1 to butterfly\
+2 to dewey\
+3 to dimick\
+4 to elkhorn\
+5 to haymow \
+6 to kingsburg\
+7 to maple creek\
+8 to pilger\
+9 to ramshorn\
+10 to spring branch 1\
+11 to spring branch 2\
+12 to stanton a\
+13 to stanton b\
+14 to stanton c\
+15 to union creek \
+\
+\
+Thayer: \
+This reference (http://www.thayercounty.ne.gov/Newspaper%20Notice%20of%20Polling%20Places%20General.pdf) \
+-1 to alexandria\
+-2 to belvidere-bruning\
+-3 to byron-chester\
+-4 to davenport-carleton\
+-5 to deshler\
+-6 to hebron north\
+-7 to hebron south\
+\
+Thomas: \
+one precinct\
+\
+Thurston: \
+-1 to anderson - blackbird\
+-2 to bryan\
+-3 to dawes\
+-4 to flournoy/merry\
+-5 to omaha\
+-6 to pender\
+-7 to perry\
+-8 to thayer\
+-9 to winnebago\
+\
+Valley: \
+1 through 7 to Precinct 1 through Precinct 7\
+\
+\
+Washington: \
+This reference (http://www.co.washington.ne.us/election_results.html) lists in order on the header\
+\
+1 to ft calhoun east\
+2 to ft calhoun west\
+3 to kennard\
+4 to lakeland\
+5 to blair skyline\
+6 to blair central\
+7 to blair dana\
+8 to blair dexters\
+9 to herman\
+10 to cuming city\
+11 to desoto\
+12 to fontanelle\
+13 to arlington\
+14 to arbor\
+15 to northview\
+\
+\
+Wayne: \
+Not 100% sure on these matches. They appear to be in alphabetical order\
+\
+-1 to brenna/plum creek/hunter\
+-2 to chapin/hancock/winside\
+-3 to deer creek/sherman\
+-4 to hoskins/garfield\
+-5 to logan/leslie\
+-6 to strahan/wilber\
+-7 to wayne 1\
+-8 to wayne 2\
+-9 to wayne 3\
+-10 to wayne 4\
+\
+Webster: \
+\
+This reference (http://www.co.webster.ne.us/election.html)\
+1 to bladen\
+2 to blue hill\
+3 to guide rock \
+4 to red cloud 1\
+5 to red cloud 2\
+\
+York: \
+Not 100% sure of these matches\
+1 is stewart \
+2 is thayer\
+3 is arbor\
+4 is ny\
+5 is leroy\
+6 is brown\
+7 is hays\
+8 is mcfadden\
+9 to york 1a\
+10 to york 1b\
+11 to york 2\
+12 to york 3\
+13 to york 4a\
+14 to york 4b\
+-could not match 2, 3, 4, 5, 6, 8\
+\
+}

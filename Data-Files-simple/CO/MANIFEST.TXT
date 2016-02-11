@@ -1,0 +1,9 @@
+CO_final.dbf (application/octet-stream) 4368240 bytes.
+CO_final.prj (text/plain; charset=US-ASCII) 145 bytes.
+CO_final.sbn (application/octet-stream) 31556 bytes.
+CO_final.sbx (application/octet-stream) 1540 bytes.
+CO_final.shp (application/octet-stream) 22662232 bytes.
+CO_final.shx (application/octet-stream)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
+co_final.tab (text/tab-separated-values)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
+CO_notes.rtf (text/plain; charset=US-ASCII)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
+CO_Shapefile.zip (application/zip)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.

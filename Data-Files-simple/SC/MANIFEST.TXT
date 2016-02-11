@@ -1,0 +1,3 @@
+SC_notes.txt (text/plain; charset=US-ASCII) 2369 bytes.
+SC_vtd_final.tab (text/tab-separated-values) 632302 bytes.
+South_Carolina_Shapefiles.zip (application/zip) 11950141 bytes.

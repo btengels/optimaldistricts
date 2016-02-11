@@ -1,0 +1,18 @@
+For Georgia, we have boundary file for 2008 with associated data, and Steve has imported 2006.  
+
+I made some changes to stata version of Steve file in order to facilitate the merge.
+
+use "C:\Users\jrodden\Dropbox\Sloan\GA\VTD08-Shape\vtd08.dta", clear
+
+joinby county_nam precinct_name_08 using "C:\Users\jrodden\Dropbox\Sloan\GA\VTD08-Shape\ga_steve.dta", unmatched(both)
+
+drop area- unknown_vo
+
+save "C:\Users\jrodden\Dropbox\Sloan\GA\VTD08-Shape\ga_merged.dta"
+
+Next, open the shapefile for 2008, and join based on the variable "id."
+
+Then export this.
+
+From the resulting dbf, use stat transfer to genereate an excel file.
+

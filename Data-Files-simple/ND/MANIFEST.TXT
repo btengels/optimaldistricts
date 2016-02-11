@@ -1,0 +1,9 @@
+ND_final.dbf (application/octet-stream) 359289 bytes.
+ND_final.prj (text/plain; charset=US-ASCII) 167 bytes.
+ND_final.sbn (application/octet-stream) 5948 bytes.
+ND_final.sbx (application/octet-stream) 828 bytes.
+ND_final.shp (application/octet-stream) 4446024 bytes.
+ND_final.shx (application/octet-stream) 4252 bytes.
+nd_merge_1017.tab (text/tab-separated-values) 136583 bytes.
+nd_notes.rtf (text/plain; charset=US-ASCII) 4709 bytes.
+ND_Shapefile.zip (application/zip) 2731407 bytes.

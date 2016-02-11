@@ -1,0 +1,47 @@
+SC data have been made available by SC Senate Judiciary committee:
+
+http://redistricting.scsenate.gov/ElectionResultsInstructions.html
+
+They have some notes:
+
+1. To provide estimates of elections results for use in the redistricting process, results for recent general elections were compiled by precinct. To accommodate for the changing precinct boundaries throughout the decade, this information was matched to the census blocks from the 2000 census. An estimate of the non-absentee votes were distributed to each of these blocks. These estimates were then matched geographically to the appropriate census blocks from the 2010 census. These estimates were then aggregated to the higher levels of the census geography, the VTD and County. Because of these factors, as well as the fact that the VTD boundaries may not reflect the actual precinct boundaries, differences may be evident in the estimates provided in the VTD-level dataset.
+
+2. A processing error was discovered after the initial release of the VTD-level election results. This affected the estimated votes for VTDs in several counties and corrected versions are being posted to the website as individual year files. Users should download the new versions and replace any information obtained before April 15, 2011.
+
+I accessed the data on May 5, 2011, so presumably these data are correct.  
+
+Save them as excel file SC_vtd.xls.
+
+Open in stata and do the following:
+
+save "C:\Users\jrodden\Dropbox\Sloan\SC\sc_political.dta"
+
+gen dshare_prs08 = prs08dem/(prs08dem+prs08rep)
+
+gen dshare_sen08 =   sen08dem/(sen08dem+sen08rep)
+
+gen dshare_sen10 = sen10dem/(sen10dem+sen10rep)
+
+gen dshare_gov10 = gov10dem/(gov10dem+gov10rep)
+
+gen dshare_ltg10 =  ltg10dem/(ltg10dem+ltg10rep)
+
+gen dshare_ag10 = ag10dem/(ag10dem+ag10rep)
+
+gen dshare_compt10 = compt10dem/(compt10dem+compt10rep)
+
+gen dshare_super10 = super10dem/(super10dem+super10rep)
+
+gen dshare_comm_ag10 = comm_ag10dem/(comm_ag10dem+comm_ag10rep)
+
+gen av = (dshare_prs08 + dshare_sen08 + dshare_sen10 + dshare_gov10 + dshare_ltg10 + dshare_ag10 + dshare_compt10 + dshare_super10 + dshare_comm_ag10)/9
+
+gen ndv = av*prs08tot
+gen ndr = (1-av)*prs08tot
+
+saveold "C:\Users\jrodden\Dropbox\Sloan\SC\sc_political_merge.dta"
+
+Get this into DBF format and join with shapefiles.
+
+Final flat file is SC_vtd_final.xls
+

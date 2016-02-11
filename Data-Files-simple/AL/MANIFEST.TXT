@@ -1,0 +1,9 @@
+al_final.dbf (application/octet-stream) 3024046 bytes.
+al_final.prj (text/plain; charset=US-ASCII) 145 bytes.
+al_final.sbn (application/octet-stream) 19700 bytes.
+al_final.sbx (application/octet-stream) 1716 bytes.
+al_final.shp (application/octet-stream) 27282544 bytes.
+al_final.shx (application/octet-stream)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
+al_final.tab (text/tab-separated-values)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
+al_notes_0927.rtf (text/plain; charset=US-ASCII)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
+AL_Shapefile.zip (application/zip)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
