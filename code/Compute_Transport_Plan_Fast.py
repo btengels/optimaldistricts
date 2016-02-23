@@ -67,7 +67,11 @@ def plot_polygon_collection(ax, geoms, values=None, colormap='Set1',facecolor=No
 def computeTransportSinkhorn(distribS,distribT, M, reg,uin):
 	# Sinkhorn algorithm from Cuturi 2013.
 	'''
-	Add some stuff here
+	M is a matrix of pairwise distances
+	distribS is a distribution of initial weights
+	distribT is a distribution of final weights
+	reg is a regularization parameter
+	uin is an initial guess for the Lagrange multiplier u
 	'''
 	# init data
 	Nini = len(distribS)
