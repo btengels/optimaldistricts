@@ -1,8 +1,0 @@
-SD_final.dbf (application/octet-stream) 774712 bytes.
-SD_final.sbn (application/octet-stream) 9116 bytes.
-SD_final.sbx (application/octet-stream) 916 bytes.
-SD_final.shp (application/octet-stream) 8653756 bytes.
-SD_final.shx (application/octet-stream) 7316 bytes.
-sd_merge_1123.tab (text/tab-separated-values) 277591 bytes.
-sd_notes.rtf (text/plain; charset=US-ASCII) 8924 bytes.
-SD_Shapefile.zip (application/zip) 4573896 bytes.

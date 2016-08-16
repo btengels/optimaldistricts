@@ -1,8 +1,0 @@
-WY_final.dbf (application/octet-stream) 607731 bytes.
-WY_final.sbn (application/octet-stream) 4996 bytes.
-WY_final.sbx (application/octet-stream) 516 bytes.
-WY_final.shp (application/octet-stream) 7194928 bytes.
-WY_final.shx (application/octet-stream) 4076 bytes.
-wy_merge_final.tab (text/tab-separated-values) 271833 bytes.
-wy_notes.rtf (text/plain; charset=US-ASCII) 5217 bytes.
-WY_Shapefile.zip (application/zip) 4322496 bytes.

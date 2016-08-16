@@ -1,8 +1,0 @@
-vt_final.dbf (application/octet-stream) 343682 bytes.
-vt_final.sbn (application/octet-stream) 3236 bytes.
-vt_final.sbx (application/octet-stream) 468 bytes.
-vt_final.shp (application/octet-stream) 1097472 bytes.
-vt_final.shx (application/octet-stream) 2372 bytes.
-vt_final.tab (text/tab-separated-values) 159095 bytes.
-vt_notes.rtf (text/plain; charset=US-ASCII) 3269 bytes.
-vt_shapefile.zip (application/zip) 659347 bytes.

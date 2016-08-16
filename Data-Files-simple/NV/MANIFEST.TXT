@@ -1,8 +1,0 @@
-NV_final.dbf (application/octet-stream) 2475388 bytes.
-NV_final.sbn (application/octet-stream) 21308 bytes.
-NV_final.sbx (application/octet-stream) 724 bytes.
-NV_final.shp (application/octet-stream) 8541796 bytes.
-NV_final.shx (application/octet-stream)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
-nv_final.tab (text/tab-separated-values)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
-NV_notes.rtf (text/plain; charset=US-ASCII)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.
-nv_shapefile.zip (application/zip)  skipped because the total size of the download bundle exceeded the limit of 10485760 bytes.

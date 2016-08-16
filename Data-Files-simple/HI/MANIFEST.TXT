@@ -1,8 +1,0 @@
-Hawaii_notes.rtf (text/plain; charset=US-ASCII) 4074 bytes.
-HI_final.dbf (application/octet-stream) 208906 bytes.
-HI_final.sbn (application/octet-stream) 3268 bytes.
-HI_final.sbx (application/octet-stream) 172 bytes.
-HI_final.shp (application/octet-stream) 3214936 bytes.
-HI_final.shx (application/octet-stream) 2852 bytes.
-hi_merge_final.tab (text/tab-separated-values) 89965 bytes.
-HI_Shapefile.zip (application/zip) 1914645 bytes.
