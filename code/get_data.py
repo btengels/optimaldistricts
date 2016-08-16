@@ -1,3 +1,4 @@
+from __future__ import division
 
 from subprocess import call
 import os
@@ -26,7 +27,7 @@ def get_state_data(state,wget=False):
 	# read shape files into geopandas
 	geo_path = glob(prefix+'/tl*.shp')[0]
 	precinct_geo = geo.GeoDataFrame.from_file(geo_path)
-	precinct_geo = precinct_geo[precinct_geo.CD_2000>=0]
+	precinct_geo = precinct_geo[precinct_geo.CD_2000>=0] # drops totals and other non-precinct observations
 	precinct_geo.CD_2000  = precinct_geo.CD_2000.astype(int)
 	precinct_geo.CD_2010  = precinct_geo.CD_2010.astype(int)
 
@@ -40,9 +41,15 @@ def get_state_data(state,wget=False):
 	precinct_geo.CD_2010 -= precinct_geo.CD_2010.min()	
 
 	# percent black in each precinct
-	precinct_geo['BLACK_PCT'] = np.nanmin(precinct_geo['POP_BLACK']/precinct_geo['POP_TOTAL'],0)
+	precinct_geo['BLACK_PCT'] = np.maximum(precinct_geo['POP_BLACK']/precinct_geo['POP_TOTAL'],0)
+	precinct_geo.loc[np.isfinite(precinct_geo['POP_TOTAL'])==False, 'BLACK_PCT'] = 0
+	precinct_geo['BLACK_PCT'].replace('NaN',0,inplace=True)
+	precinct_geo['BLACK_PCT'] *= 100
 
-	# simplify geometries for faster rendering
+	# denote bodies of water
+	precinct_geo['lakes'] = (precinct_geo.POP_TOTAL==0)
+
+	# simplify geometries for faster image rendering
 	precinct_geo.geometry = precinct_geo.geometry.simplify(.0001)	
 
 	# pickle dataframe for future use

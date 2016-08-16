@@ -17,32 +17,45 @@ import pickle
 import time
 
 
+def unpack_multipolygons(geos, districts, lakes):
+	'''
+	Takes a vector of polygons and/or multipolygons. Returns an array of 
+	only polygons by taking multipolygons and unpacking them.
+	'''
+	geo_list = []
+	district_list = []
+	lake_list = []
+	for g,d,lake in zip(geos, districts, lakes):
+		if type(g) == shapely.geometry.polygon.Polygon:
+			geo_list.append(g)
+			district_list.append(d)
+			lake_list.append(lake)
+		else:
+			for sub_g in g:
+				if type(sub_g) == shapely.geometry.polygon.Polygon:
+					geo_list.append(sub_g)
+					district_list.append(d)
+					lake_list.append(lake)
+	
+	geos = np.array(geo_list)
+	dists = np.array(district_list)
+	lakes = np.array(lake_list)
+	return geos, dists, lakes
 
 
-
-def plot_polygon_collection(ax, geoms, values=None, colormap='Set1',facecolor=None, edgecolor=None, alpha=0.5, linewidth=0, **kwargs):
+def plot_polygon_collection(ax, geoms, values=None, colormap='Set1', facecolor=None, edgecolor=None, alpha=0.5, linewidth=0, **kwargs):
 	'''
 	Plot a collection of Polygon geometries, much faster than GeoDataFrame.plot(...) and allows for updating on the fly.
 	'''
+	if values is not None:
+		geoms, values = unpack_multipolygons(geoms, values)
+
 	patches = []
-	mask = np.array([type(i)==shapely.geometry.polygon.Polygon for i in geoms])
-
-	for poly_true, poly in zip(mask,geoms):
-
-		if poly_true:
-			a = np.asarray(poly.exterior)
-			if poly.has_z:
-				poly = shapely.geometry.Polygon(zip(*poly.exterior.xy))
-
-			patches.append(Polygon(a))
-
-		else:
-			a = np.asarray(poly[0].exterior)
-			if poly.has_z:
-				poly = shapely.geometry.Polygon(zip(*poly[0].exterior.xy))
-
-			patches.append(Polygon(a))
-
+	for poly in geoms:		
+		a = np.asarray(poly.exterior)
+		if poly.has_z:
+			poly = shapely.geometry.Polygon(zip(*poly.exterior.xy))
+		patches.append(Polygon(a))
 
 	patches = PatchCollection(patches, facecolor=facecolor, linewidth=linewidth, edgecolor=edgecolor, alpha=alpha, **kwargs)
 
@@ -208,7 +221,7 @@ def interpolateTransportPlans(Tin,Tout,D):
 
 
 
-def gradientDescentOptimalTransport(Iin,I_wgt,Fin,F_wgt,precinct_data=None, Tinit = None, videoFlag=False, reg=10, black_param=200):
+def gradientDescentOptimalTransport(Iin,I_wgt,Fin,F_wgt,precinct_data, Tinit=None, reg=10, alphaW=0):
 	'''
 	'''
 	n_districts = len(Fin)
@@ -220,7 +233,8 @@ def gradientDescentOptimalTransport(Iin,I_wgt,Fin,F_wgt,precinct_data=None, Tini
 	#Initial optimization step, mostly to initialize u
 	DistMat_travel       = metrics.pairwise.euclidean_distances( Iin[:,0:2], Fin[:,0:2] )
 	DistMat_demographics = metrics.pairwise.euclidean_distances( np.atleast_2d( Iin[:,2]).T, np.atleast_2d( Fin[:,2] ).T)
-	DistMat = DistMat_travel + black_param*DistMat_demographics
+	DistMat_demographics *= DistMat_travel.mean()
+	DistMat = (1-alphaW)*DistMat_travel + alphaW*DistMat_demographics
 	
 
 	Mout,u,cost = computeTransportSinkhorn(I_wgt, F_wgt, DistMat, reg,uinit)
@@ -235,93 +249,17 @@ def gradientDescentOptimalTransport(Iin,I_wgt,Fin,F_wgt,precinct_data=None, Tini
 	costVec = np.zeros(lineSearchN)
 	stepsize_vec = np.linspace(0,lineSearchRange,lineSearchN)
 
-	if videoFlag:
-		#TODO: 	Use the interpolation function to go between Tinitial and Mout
-		#		Then plot it.
-
-		# set up initial figure, enable interactive plotting
-		sb.set_palette("cool", n_colors=n_districts)
-		plt.ion()
-		fig, ax = sb.plt.subplots(1,1, figsize=(7,5))
-		col = plot_polygon_collection(ax, precinct_data.geometry.values, values=precinct_data.current_district.values)
-		# fig.savefig('../maps/Colorado/movie/GD_alg_'+str(0)+'.png')
-		plt.pause(1e-5)
-
-
-		#This block of code does the interpolation between Tinit and Mout
-		#Interpolation occurs by finding the precincts with lowest distance to correct precincts
-		TCurrent = Tinit.copy()
-		Tout = np.array([np.sum(Mout[i,:])*(Mout[i,:] == np.max(Mout[i,:])) for i in range(Nini)])
-
-		D = metrics.pairwise.euclidean_distances( I, I )
-
-		ind = 0
-		NFrame = 50
-
-
-		#This for loop and the arglist after essentially orders precincts by their distance
-		#from precincts with the same correct final label. This was originally inside
-		# the while loop  (meaning that distance was from precincts with the correct
-		#current label), but it was too slow that way.
-		DTemp = np.zeros(D.shape)
-		TMask = TCurrent*Tout
-		for i in range(len(D)):
-			#j = np.nonzero(Tout[i,:])[0][0]
-			j = np.argmax(Tout[i,:])
-			if np.sum(TMask[i,:]) != 0:
-				DTemp[i,:] = 0
-			else:
-				DTemp[i,:] = D[i,:]*TMask[:,j]
-		argList = np.argsort(np.min(DTemp + 1*(DTemp==0),axis=1))
-
-		startVal = 0
-		endVal = min(NFrame,Nini)
-
-		#This while loop does the intepolation and plots it
-		while np.max(np.abs(TCurrent-Tout))> .00000001:
-			#print ind
-
-			TCurrent[argList[startVal:endVal]] = Tout[argList[startVal:endVal]]
-
-			startVal += NFrame
-			endVal = min(startVal+NFrame, Nini)
-
-			precinct_data['district_initialSteps'+str(ind)] = np.array( [np.argmax(i) for i in TCurrent])
-			filename = '../maps/Colorado/movie/Initial_Steps' + str(ind) + '.png'
-
-			# update colors on map
-			col.set_array(precinct_data['district_initialSteps'+str(ind)])
-
-
-			plt.pause(1e-5)
-			# fig.savefig(filename)
-
-			ind += 1
-
-
 
 	for i_step in range(1,newtonSteps):
 		#Compute an optimal plan, given a certain I,F
 		DistMat_travel       = metrics.pairwise.euclidean_distances( I[:,0:2], F[:,0:2] )
 		DistMat_demographics = metrics.pairwise.euclidean_distances( np.atleast_2d( I[:,2]).T, np.atleast_2d( F[:,2] ).T)
-		DistMat = DistMat_travel + black_param*DistMat_demographics
+		DistMat_demographics *= DistMat_travel.mean()
+		DistMat = (1-alphaW)*DistMat_travel + alphaW*DistMat_demographics
 		
 		Mout,u,cost = computeTransportSinkhorn(I_wgt, F_wgt, DistMat, reg,u)
 		# print Mout
 		precinct_data['district_iter'+str(i_step)] = np.array( [np.argmax(i) for i in Mout])
-
-		if videoFlag:
-
-			filename = '../maps/Colorado/movie/GD_alg_' + str(i_step) + '.png'
-
-			# update colors on map
-			col.set_array(precinct_data['district_iter'+str(i_step)])
-
-			# for i_F in range(n_districts):
-			# 	ax.scatter(F[i_F,0], F[i_F,1], color='black', marker='*', s=120, alpha=.2)
-
-			plt.pause(1e-5)
-			# fig.savefig(filename)
 
 
 		#Compute the Gradient in F
@@ -339,7 +277,8 @@ def gradientDescentOptimalTransport(Iin,I_wgt,Fin,F_wgt,precinct_data=None, Tini
 			
 			# DistMat_demographics = metrics.pairwise.euclidean_distances( np.I, F - stepsize_vec[j]*Grad )
 			DistMat_demographics = metrics.pairwise.euclidean_distances( np.atleast_2d( I[:,2]).T, np.atleast_2d( F[:,2] - stepsize_vec[j]*Grad[:,2]).T)
-			DistMat = DistMat_travel + black_param*DistMat_demographics
+			DistMat_demographics *= DistMat_travel.mean()
+			DistMat = (1-alphaW)*DistMat_travel + alphaW*DistMat_demographics
 
 			Mout,u,cost = computeTransportSinkhorn(I_wgt, F_wgt, DistMat, reg, u)
 			costVec[j] = cost
@@ -352,24 +291,16 @@ def gradientDescentOptimalTransport(Iin,I_wgt,Fin,F_wgt,precinct_data=None, Tini
 
 		F_list.append(F)
 		Mout_list.append(Mlist[ind])
-	# if videoFlag:
-	# 	file_names = ['tempfig' + str(i) + '.png' for i in range(newtonSteps)]
-	# 	images = [Image.open(fn) for fn in file_names]
-	# 	writeGif('OutputMovie.GIF', images, duration=0.2)
 
 
 	DistMat_travel       = metrics.pairwise.euclidean_distances( I[:,0:2], F[:,0:2] )
 	DistMat_demographics = metrics.pairwise.euclidean_distances( np.atleast_2d( I[:,2]).T, np.atleast_2d( F[:,2] ).T)
-	DistMat = DistMat_travel + black_param*DistMat_demographics
+	DistMat_demographics *= DistMat_travel.mean()
+	DistMat = (1-alphaW)*DistMat_travel + alphaW*DistMat_demographics
 	Mout,u,cost = computeTransportSinkhorn(I_wgt, F_wgt, DistMat, reg,uinit)
 
 	Mout_list.append(Mout)
 	return Mout_list,cost,F_list
-
-
-
-
-
 
 
 # ------------------------------------------------------------------------------
