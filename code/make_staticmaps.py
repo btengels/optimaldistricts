@@ -268,7 +268,7 @@ states = {
 			'MO':'Missouri',
 			# 'MT':'Montana',
 			# 'NE':'Nebraska',
-			'NV':'Nevada',
+			# 'NV':'Nevada',
 			# 'NH':'New Hampshire',
 			'NJ':'New Jersey',
 			'NM':'New Mexico',
