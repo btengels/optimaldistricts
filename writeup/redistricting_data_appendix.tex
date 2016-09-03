@@ -1,0 +1,120 @@
+\documentclass[11pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsfonts,amssymb,amsthm,amsmath}
+\usepackage{enumerate}
+\usepackage[flushleft]{threeparttable}
+\usepackage[format=hang,font=normalsize,labelfont=bf]{caption}
+\usepackage{amsmath}
+\usepackage{datetime}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{delarray}
+\usepackage{eurosym}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage[colorlinks=true,urlcolor=cmu,citecolor=cmu,linkcolor=cmu]{hyperref}
+\usepackage{float,color}
+\usepackage[pdftex]{graphicx}
+\usepackage{lscape}
+\usepackage{pdflscape}
+% \usepackage{geometry}
+\usepackage{subfig}
+\usepackage{epsf}
+\usepackage{multicol}
+\usepackage{bbm}
+\usepackage{epstopdf}
+\usepackage{lscape}
+\usepackage{bibentry}
+\usepackage[font={bf}]{caption}
+\usepackage{booktabs}
+
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+\newcommand{\argmax}{\operatornamewithlimits{argmax}}
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+
+\listfiles
+\makeatletter
+\renewcommand\BR@b@bibitem[2][]{\BR@bibitem[#1]{#2}\BR@c@bibitem{#2}} 
+\makeatother
+
+\usepackage{color}
+\definecolor{cmu}{rgb}{0.76,0,0}
+
+\usepackage{algorithm2e}
+
+
+\usepackage{geometry}
+\geometry{verbose,tmargin=0.75in,bmargin=1in,lmargin=0.75in,rmargin=0.75in,headheight=0.25in}
+
+
+\usepackage[section]{placeins}
+\hypersetup{colorlinks,linkcolor=blue,urlcolor=blue,citecolor=blue}
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+%\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}{Definition} % Number definitions on their own
+\newtheorem{derivation}{Derivation} % Number derivations on their own
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}{Proposition} % Number propositions on their own
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+\numberwithin{equation}{section}
+
+\newcommand{\R}{\mathbb{R}}
+
+\linespread{1.3}
+\begin{document}
+
+\title{A Political Districting Algorithm with Communities of Interest\\
+Online Appendix }
+\author{Ryan Murray\thanks{Department of Mathematics,
+Penn State University; email: rwm22@psu.edu.} \\
+Penn State University  \\
+\and Benjamin Tengelsen \thanks{Tepper School of Business, 
+Carnegie Mellon University; email: btengels@cmu.edu.} \\
+Carnegie Mellon University }
+\maketitle
+
+
+\begin{abstract}
+This work proposes a new algorithm for drawing district boundaries. The algorithm is an adaptation of previous methods which minimize transport distances between constituents and representatives. The crucial adaptation is a modification in the distance which permits the algorithm to respect communities of interest. The problem is also rendered computationally tractable by some very recent regularizing methods. Finally, the results of the algorithm, along with the accompanying political ramifications, are presented for congressional districts across a large number of states.
+\end{abstract}
+
+\newpage{} \onehalfspacing
+\tableofcontents
+
+\newpage
+\section{Data Desription }
+
+
+\newpage
+\section{National Results }
+
+
+
+\newpage
+\section{State by State Results }
+\input{state_by_state_appendix.tex}
+
+
+
+
+
+
+\end{document}
