@@ -303,37 +303,99 @@ def get_optimal_districts(pcnct_df, alphaW, office_loc0, reg=10, random_start=Fa
 
 def make_bokehplots(pcnct_df, alphaW):
 	'''
-	
+
 	'''		
+	# palette = make_palette(n_districts)
+	palette = np.array(sns.color_palette("Set1", n_colors=n_districts, desat=.5).as_hex())
+
 	# unpack multipolygons, make new (longer) dataframe
 	dist0 = pcnct_df.CD_2010.values
 	dist1 = pcnct_df.district_iter19.values
 	geos, col1 = tpf.unpack_multipolygons(pcnct_df.geometry.values, dist0)
 	geos, col2 = tpf.unpack_multipolygons(pcnct_df.geometry.values, dist1)
 	df = pd.DataFrame({'geometry': geos, 'CD_2010': col1, 'district_iter19': col2})
+
+	# 
+	df['patchx'] = df.geometry.apply(lambda row: get_xcoords(row))
+	df['patchy'] = df.geometry.apply(lambda row: get_ycoords(row))
+
+	df['color1'] = [palette[i] for i in df.CD_2010]
+	df['color2'] = [palette[i] for i in df.district_iter19]
+
+	source = ColumnDataSource(data=dict(
+		x = df['patchx'].values.astype(list),
+		y = df['patchy'].values.astype(list),
+		color1 = df['color1'].values.astype(list),
+		color2 = df['color2'].values.astype(list),
+		# district_name = pcnct_df['current_district'].values.astype(list),
+		# precinct_name = pcnct_df['NAME10'].values.astype(list),
+		# district_pop  = pcnct_df['district_pop'].values.astype(list),
+		# precinct_pop  = pcnct_df['POP100'].values.astype(list),
+	))
+
+	# tools for bokeh users
+	TOOLS = "pan,box_zoom,reset,save"
+
+	# compute height/width of states to make maps are about the right shape
+	lon_range = pcnct_df.INTPTLON10.max() - pcnct_df.INTPTLON10.min()
+	lat_range = pcnct_df.INTPTLAT10.max() - pcnct_df.INTPTLAT10.min()
 	
-	geolist1 = [cascaded_union(df[df.CD_2010 == i].geometry.values) for i in range(n_districts)]
-	geolist2 = [cascaded_union(df[df.district_iter19 == i].geometry.values) for i in range(n_districts)]
+	# make bokeh figure
+	p = figure(plot_width=500, 
+			   plot_height=500, 
+			   tools=TOOLS, toolbar_location='right')
+
+	# p = figure(plot_width=int(lon_range*100), 
+	# 		   plot_height=int(lat_range*140), 
+	# 		   tools=TOOLS, toolbar_location='right')
+
+	# remove bokeh logo
+	p.toolbar.logo = None
+	p.patches('x','y', source=source, 
+	          fill_color='color1', fill_alpha=0.7, 
+	          line_color=None, line_width=0.05,
+	          line_alpha=.2)
+
+	# Turn off tick labels
+	p.axis.major_label_text_font_size = '0pt'  
 	
-	df1 = pd.DataFrame({'geometry': geolist1, 'district':np.arange(n_districts)})
-	df2 = pd.DataFrame({'geometry': geolist2, 'district':np.arange(n_districts)})
+	# Turn off tick marks 	
+	p.axis.major_tick_line_color = None  # turn off major ticks
+	p.axis[0].ticker.num_minor_ticks = 0  # turn off minor ticks
+	p.axis[1].ticker.num_minor_ticks = 0
 
-	file_path1 = '../maps/' + state + '/dynamic/before.html'
-	file_path2 = '../maps/' + state + '/dynamic/' + str(alphaW).replace('.', '_') + '_after.html'
-	make_single_bokeh(df1, file_path1)
-	make_single_bokeh(df2, file_path2)
+	# save output as html file
+	filename = '../maps/' + state + '/dynamic/before.html'
+	output_file(filename)
+	show(p)
+	save(p)
 
-	return None
+
+	# change colors to final districts
+	p.patches('x','y', source=source, 
+          fill_color='color2', fill_alpha=0.7, 
+          line_color=None, line_width=0.05,
+          line_alpha=.2)
+
+	# save final html file
+	filename = '../maps/' + state + '/dynamic/' + str(alphaW).replace('.', '_') + '_after.html'
+	output_file(filename)
+	save(p)
 
 
-def make_single_bokeh(df, filename):
+def make_bokehplot_single(pcnct_df, district_col, filename):
 	'''
-	'''
+
+	'''		
 	# palette = make_palette(n_districts)
 	palette = np.array(sns.color_palette("Set1", n_colors=n_districts, desat=.5).as_hex())
 
-	print(df)
-	# make patches
+	# unpack multipolygons, make new (longer) dataframe
+	dists = pcnct_df[district_col].values
+	geos, col1 = tpf.unpack_multipolygons(pcnct_df.geometry.values, dists)	
+	df = pd.DataFrame({'geometry': geos, 'district': col1})
+
+	# 
 	df['patchx'] = df.geometry.apply(lambda row: get_xcoords(row))
 	df['patchy'] = df.geometry.apply(lambda row: get_ycoords(row))
 	df['color1'] = [palette[i] for i in df.district]
@@ -351,11 +413,19 @@ def make_single_bokeh(df, filename):
 
 	# tools for bokeh users
 	TOOLS = "pan,box_zoom,reset,save"
+
+	# compute height/width of states to make maps are about the right shape
+	# lon_range = pcnct_df.INTPTLON10.max() - pcnct_df.INTPTLON10.min()
+	# lat_range = pcnct_df.INTPTLAT10.max() - pcnct_df.INTPTLAT10.min()
 	
 	# make bokeh figure
 	p = figure(plot_width=500, 
 			   plot_height=500, 
 			   tools=TOOLS, toolbar_location='right')
+
+	# p = figure(plot_width=int(lon_range*100), 
+	# 		   plot_height=int(lat_range*140), 
+	# 		   tools=TOOLS, toolbar_location='right')
 
 	# remove bokeh logo
 	p.toolbar.logo = None
@@ -372,14 +442,10 @@ def make_single_bokeh(df, filename):
 	p.axis[0].ticker.num_minor_ticks = 0  # turn off minor ticks
 	p.axis[1].ticker.num_minor_ticks = 0
 
-	print(df)
 	# save output as html file
 	output_file(filename)
-	show(p)
-	stop
+	# show(p)
 	save(p)
-
-	return None
 
 
 states = {
@@ -439,7 +505,7 @@ if __name__ == '__main__':
 
 	state_list = list(states.keys())
 	state_list.sort()
-	for state in state_list[0:1]:
+	for state in state_list:
 		print(state)
 
 		# ----------------------------------------------------------------------
@@ -496,6 +562,12 @@ if __name__ == '__main__':
 		filename = '../maps/' + state + '/static/before.png'
 		patches = plot_state(pcnct_df, 'CD_2010', ax, fig, filename)
 
+		# make before bokeh plot
+		geolist = [cascaded_union(pcnct_df[pcnct_df.CD_2010 == i].geometry.values) for i in range(n_districts)]
+		df = pd.DataFrame({'geometry': geolist, 'CD_2010':np.arange(n_districts)})					
+		filename = '../maps/' + state + '/dynamic/before.html'
+		make_bokehplot_single(df, 'CD_2010', filename)		
+
 		# ----------------------------------------------------------------------
 		# solve for optimal districts at different levels of alpha
 		# ----------------------------------------------------------------------
@@ -519,13 +591,11 @@ if __name__ == '__main__':
 			fig.savefig(filename, bbox_inches='tight', dpi=300)
 			stars.remove()
 
-			# make bokeh plots
-			
-			geolist = [cascaded_union(pcnct_df_new[pcnct_df_new.CD_2010==i].geometry.values) for i in range(n_districts)]
-			df = pd.DataFrame({'geometry': geolist, 'CD_2010':np.arange(n_districts)})
-			
-			make_bokehplots(pcnct_df, alphaW)
-			stop
+			# make bokeh plots			
+			geolist = [cascaded_union(pcnct_df_new[pcnct_df_new.district_iter19 == i].geometry.values) for i in range(n_districts)]
+			df = pd.DataFrame({'geometry': geolist, 'district_iter19':np.arange(n_districts)})			
+			filename = '../maps/' + state + '/static/' + str(alphaW).replace('.', '_') + '_after.png'
+			make_bokehplot_single(df, 'district_iter19', filename)
 
 			# include before/after transport cost in resulting DataFrame
 			pcnct_df_new['cost0'] = cost0

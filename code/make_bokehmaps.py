@@ -1,19 +1,13 @@
-from __future__ import division
 
 import numpy as np
 import pandas as pd
 import geopandas as geo
 import pickle
 
-
-import time
-import transport_plan_functions as tpf
-import sklearn.metrics as metrics
-
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-from bokeh.io import output_file, show, output_notebook
+from bokeh.io import figure, output_file, show, output_notebook
 from bokeh.models import GeoJSONDataSource, ColumnDataSource
 from bokeh.plotting import *
 
@@ -114,119 +108,85 @@ def make_singlemaps(geo_df, filename_stub=None):
 	save(p)
 
 
-def get_optimal_districts( filename, state, videoFlag=False, reg=10, black_param=0 ):
-	'''
-	'''
-	# read in census data
-	precinct_data = pd.read_pickle( '../Data-Files-simple/'+state+'/precinct_data_demographics.p')
-	precinct_data = precinct_data[precinct_data.total_pop.values>0]
-
-	precinct_data['Black_percent'] = precinct_data.Black/precinct_data.total_pop
-
-	# weight each precinct by its population (so each cluster has approx the same population)
-	precinct_location = precinct_data[['INTPTLON10','INTPTLAT10','Black_percent']].values
-	precinct_wgt      = precinct_data.total_pop.values/precinct_data.total_pop.values.sum()
-
-	# keep the number of districts the same as in data
-	n_districts    = int( precinct_data.current_district.max() )+1
-	n_precincts   = len( precinct_data )
-
-	print 'load stuff'
-	# randomly select initial districts, all districts have equal weight
-	Office_location0 = precinct_location[ np.random.randint( 0,n_precincts,n_districts ) ]
-	Office_wgt = np.ones((len(Office_location0),))/len(Office_location0)
-
-	# initial transport plan: i.e. the measure of population assigned to each district 
-	office_starts = np.zeros((n_precincts,n_districts)) 
-	for i_d,dist in enumerate( precinct_data.current_district.values):
-		office_starts[ i_d,int(dist) ] = precinct_wgt[i_d]
-
-	print 'office location'
-	# distance of each precinct to its center (aka, "office")
-	DistMat_travel       = metrics.pairwise.euclidean_distances( precinct_location[:,0:2], Office_location0[:,0:2] )
-	
-	# demographic distance
-	DistMat_demographics = metrics.pairwise.euclidean_distances( np.atleast_2d( precinct_location[:,2]).T, np.atleast_2d( Office_location0[:,2] ).T)
-
-	# total distance
-	DistMat = DistMat_travel + black_param*DistMat_demographics
-
-	# compute current cost function (to measure before/after improvements)
-	Office_location = tpf.optimizeF( precinct_location, precinct_wgt, office_starts, Office_location0, Office_wgt, DistMat )
-	temp = np.log(office_starts)	
-	temp[np.isreal(np.log(office_starts))] = 0
-	reg = 10
-	cost0 = np.sum(DistMat*office_starts) + 1.0/reg*np.sum( temp*office_starts )
-
-	# compute optimal districts, its associated cost and gradient descent path
-	OptimalPlan_steps, cost, OptimalOffices_steps = tpf.gradientDescentOptimalTransport(precinct_location, precinct_wgt, Office_location, Office_wgt, precinct_data,Tinit=office_starts, videoFlag=videoFlag, reg=reg, black_param=black_param)	
-	F_opt  = OptimalOffices_steps[-1]
-
-	return cost0, cost, precinct_data, Office_location0, F_opt
 
 
-
-states = {	'AL':'01',
-			'AZ':'04',
-			'CA':'06',
-			'CO':'08', 
+states = {	#'AL':'01',
+			# 'AZ':'04',
+			# 'CA':'06',
+			# 'CO':'08', 
 			'CT':'09', 
-			'FL':'12', 
-			'GA':'13', 
-			# 'HI':'15', 
-			'IA':'19', 
-			# 'ID':'16', 
-			'IL':'17', 
-			'IN':'18', 
-			'KS':'20', 
-			'LA':'22', 
-			'MA':'25', 
-			'MD':'24', 
-			'MI':'26', 
-			'MN':'27', 
-			'MO':'29', 
-			'MS':'28', 
-			'NC':'37', 
-			'NE':'31', 
-			# 'NH':'33', 
-			'NJ':'34', 
-			'NM':'35', 
-			'NV':'32', 
-			'NY':'36',
-			'OH':'39', 
-			'OK':'40', 
-			# 'OR':'41', #problem here
-			'PA':'42', 
-			# 'RI':'44', #problem here
-			'SC':'45', 
-			'TN':'47', 
-			'TX':'48', 
-			# 'UT':'49', #problem here
-			'VA':'51',# used https://github.com/vapublicaccessproject/va-precinct-maps instead
-			'WA':'53', 
-			'WI':'55',
+			# 'FL':'12', 
+			# 'GA':'13', 
+			# # 'HI':'15', 
+			# 'IA':'19', 
+			# # 'ID':'16', 
+			# 'IL':'17', 
+			# 'IN':'18', 
+			# 'KS':'20', 
+			# 'LA':'22', 
+			# 'MA':'25', 
+			# 'MD':'24', 
+			# 'MI':'26', 
+			# 'MN':'27', 
+			# 'MO':'29', 
+			# 'MS':'28', 
+			# 'NC':'37', 
+			# 'NE':'31', 
+			# # 'NH':'33', 
+			# 'NJ':'34', 
+			# 'NM':'35', 
+			# 'NV':'32', 
+			# 'NY':'36',
+			# 'OH':'39', 
+			# 'OK':'40', 
+			# # 'OR':'41', #problem here
+			# 'PA':'42', 
+			# # 'RI':'44', #problem here
+			# 'SC':'45', 
+			# 'TN':'47', 
+			# 'TX':'48', 
+			# # 'UT':'49', #problem here
+			# 'VA':'51',# used https://github.com/vapublicaccessproject/va-precinct-maps instead
+			# 'WA':'53', 
+			# 'WI':'55',
 			}
 
 
 
 if __name__ == '__main__':
 
+
+	pcnct_df_new.to_pickle('../tables/' + state + '/results_' + str(alphaW) + '.p')
+
+
+	TOOLS="resize,crosshair,pan,wheel_zoom,box_zoom,reset,tap,previewsave,box_select,poly_select,lasso_select"
+
+	output_file("color_scatter.html", title="color_scatter.py example")
+
+
+	p = figure(tools=TOOLS)
+	p.scatter(x, y, radius=radii, fill_color=colors, fill_alpha=0.6, line_color=None)
+
+	output_file('test.html')
+	save(p)
+
+	show(p)  # open a browser	
+
 	state_df={}
-	for black_param in [0,.05,.1,.15,.2,.25,.3,.5,.7,.9,1,1.5,2.5]:
+	for black_param in [0]:
 		statelist = states.keys()
 		for state in states:
 		# while len(statelist)>0:
 			# state = statelist[0]
-			try:
-				print state
-				make_folder('../maps/'+state)
-				make_folder('../maps/'+state+'/movie_files')
-				make_folder('../maps/'+state+'/static')
+			# try:
+			print state
+			make_folder('../maps/'+state)
+			make_folder('../maps/'+state+'/dynamic')				
 
-				filename = '../maps/'+state+'/static/foo.png'
-				cost0, cost, precinct_data_result, F0, F_opt = get_optimal_districts( filename, state, black_param=black_param)
-				make_singlemaps(precinct_data_result, filename_stub='../maps/'+state+'/static/'+str(black_param).replace('.','_')+'_')				
+			filename = '../maps/'+state+'/static/foo.png'
+			cost0, cost, precinct_data_result, F0, F_opt = get_optimal_districts( filename, state, black_param=black_param)
+			make_singlemaps(precinct_data_result, filename_stub='../maps/'+state+'/dynamic/'+str(black_param).replace('.','_')+'_')				
 					
-			except:
-				pass
+			# except:
+				# pass
 
