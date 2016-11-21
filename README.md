@@ -9,17 +9,17 @@ The precinct-level data are first taken from [autoredistrict.org](http://autored
 
 The code is written in Python and aims to be tidy/readable so that anyone can use and adapt the code for their respective state. Currently, there are three important scripts used to generate the maps/graphs/etc. for each state.
 
-- get_data.py: This script is prepares the Geopandas DataFrames, which are saved alongside the shapefiles. This file drops adjacent bodies of water, drops all unnecessary variables, and reduces the complexity of the polygons so our maps can load quickly online. If you downloaded the Data-Files folder and see some pickled (.p) files, you don't need to run this script unless you want to change the DataFrames in some way. 
+- **get_data.py**: This script is prepares the Geopandas DataFrames, which are saved alongside the shapefiles. This file drops adjacent bodies of water, drops all unnecessary variables, and reduces the complexity of the polygons so our maps can load quickly online. If you downloaded the Data-Files folder and see some pickled (.p) files, you don't need to run this script unless you want to change the DataFrames in some way. 
 
-- transport\_plan_functions.py: This file contains functions used in computing the optimal districts. The primary function is  `gradientDescentOT()`, and most of the other functions in the file exist to support this main function. All of the functions have detailed doc strings describing their inputs/outputs and functionality. 
+- **transport\_plan_functions.py**: This file contains functions used in computing the optimal districts. The primary function is  `gradientDescentOT()`, and most of the other functions in the file exist to support this main function. All of the functions have detailed doc strings describing their inputs/outputs and functionality. 
 
-- make_maps.py: This script reads in the pickled DataFrames and for each state with 2 or more congressional districts...
-⋅⋅* Makes a map of the current (2010) congresisonal districts (approximate since we keep precincts intact). Two kinds of maps are made, a static .png and then a web-ready [bokeh](http://bokeh.pydata.org/en/latest/) plot.
-⋅⋅*  Computes the optimal districts for a given value of alphaW.
-⋅⋅*  (beta) Checks to see if the resulting map is comprised of contiguous districts. If the districts are contiguous, the script computes new districts with highest possible value for alphaW that still respects contiguity. 
-⋅⋅*  Makes .png and html maps of the new districts.
-⋅⋅*  Plots kernel density plots of district-level statistics
-⋅⋅*  Saves a list of dataframes used in making the maps...to be used in ongoing projects (ranking states by a gerrymandering index, looking at the number of competitive seats, etc.)
+- **make_maps.py**: This script reads in the pickled DataFrames and for each state with 2 or more congressional districts...
+  * Makes a map of the current (2010) congresisonal districts (approximate since we keep precincts intact). Two kinds of maps are made, a static .png and then a web-ready [bokeh](http://bokeh.pydata.org/en/latest/) plot.
+  *  Computes the optimal districts for a given value of alphaW.
+  *  (beta) Checks to see if the resulting map is comprised of contiguous districts. If the districts are contiguous, the script computes new districts with highest possible value for alphaW that still respects contiguity. 
+  *  Makes .png and html maps of the new districts.
+  *  Plots kernel density plots of district-level statistics
+  *  Saves a list of dataframes used in making the maps...to be used in ongoing projects (ranking states by a gerrymandering index, looking at the number of competitive seats, etc.)
 
  
 Authors:
