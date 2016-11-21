@@ -9,7 +9,7 @@
 *.fmt
 
 ## Large Python pickles
-*.p
+# *.p
 
 ## Intermediate documents:
 *.dvi
