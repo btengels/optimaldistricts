@@ -1,0 +1,11 @@
+€}q(Umake_stat_tables]q(Ufinal_tablesqUmake_folderqUdemographics_oldqUmost_least_gerryedqUdemographics_newqeU	make_maps]q(Uupdate_colorsq	Uxlimq
+Umake_bokehplot_singleqUstatesqUcolorsqUcostqUaxqUfilenameqUpcnct_df_newqUn_precinctsqUplot_patchesqU	pcnct_locqUcost0qUgeolistqUpatchesqUdistrictqUget_optimal_districtsqUylimqUrandom_startqUstateqUfigqUpcnct_dfqU
+state_listqUn_districtsq Udfq!UF_optq"Uget_xcoordsq#Ustarsq$Umake_paletteq%hUgeomsq&Umake_bokehplotsq'UiU
+plot_stateq(Udraw_boundaryq)UalphaWq*Udistsq+Uget_ycoordsq,Uoffice_loc0q-eU
+Geometries]q.(U	shapefileq/U
+referendumq0Ushapesq1U
+land_geomsq2eUmake_bokehmaps]q3(hU	statelistq4hhhUstate_dfq5hUmake_singlemapsq6h"Ublack_paramq7hh#UF0q8UTOOLSq9Uph,Uprecinct_data_resultq:eUtransport_plan_functions]q;(U	optimizeFq<Udistance_metricq=UcomputeTransportSinkhornq>UgradientDescentOTq?UinterpolateTransportPlansq@Uunpack_multipolygonsqAUtransportGradientqBeUSinkhornTest]qC(UDistMatqDhUFUIUhUMoutqEUNiniqFh>UsUI_wgtqGUF_wgtqHUuinitqIUnumPtsqJUuUregqKeUget_data]qL(hhhUget_state_dataqMeUmake_staticmaps]qN(h	h
+hhhhhhhhhhhhhhhhhhhhh h!h"h#h$h%hh&h'Uih(h)h*h-h+h,Umake_single_bokehqOeU
+make_maps2]qP(h	h
+hhhhhhhhhhhhhhhhhhhhhh h!h"h#h$h%hh&h'Uih(h)h*h+h,h-eUmake_appendix]qQ(hUpaletteqRhUmake_barplotqShh*h!Umake_appendix_pageqTUstate_df_listqUUcombined_df_listqVhUUS_dfqWUfUdf_listqXUmake_district_dfqYUalphaW_listqZU
+US_df_listq[Uidfq\Umake_histplotq]eu.

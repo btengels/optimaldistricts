@@ -60,6 +60,10 @@ def get_state_data(state, wget=False):
     geo_df = geo.GeoDataFrame.from_file(geo_path)
     geo_df.CD_2010 = geo_df.CD_2010.astype(int)
 
+    # simplify geometries for faster image rendering
+    # bigger number gives a smaller file size
+    geo_df.geometry = geo_df.geometry.simplify(.005).buffer(0.001)    
+
     # drops totals and other non-precinct observations
     geo_df = geo_df[geo_df.CD_2010 >= 0]
 
@@ -118,10 +122,6 @@ def get_state_data(state, wget=False):
 
     # unpack multipolygons
     geo_df = tpf.unpack_multipolygons(geo_df)
-
-    # simplify geometries for faster image rendering
-    # bigger number gives a smaller file size
-    geo_df.geometry = geo_df.geometry.simplify(.005).buffer(0.001)
 
     # pickle dataframe for future use
     pickle.dump(geo_df, open(prefix + '/precinct_data.p', 'wb'), protocol=2) 
@@ -407,6 +407,10 @@ def make_bokeh_map(pcnct_df, groupvar, palette, filename):
 	# aggregating can create multi-polygons, can't plot in bokeh so unpack those
 	df = tpf.unpack_multipolygons(df, impute_vals=False)
 
+	# smooth out the district level polygons
+	df.geometry = df.geometry.simplify(.005).buffer(0.001)	
+
+	# carry over important variables into the district-level dataframe 
 	df['area'] = df.geometry.area	
 	df['DEM'] = df[['PRES04_DEM','PRES08_DEM','PRES12_DEM']].mean(axis=1)
 	df['REP'] = df[['PRES04_REP','PRES08_REP','PRES12_REP']].mean(axis=1)
@@ -420,11 +424,7 @@ def make_bokeh_map(pcnct_df, groupvar, palette, filename):
 	df['dist'] = df.index.values.astype(int) + 1
 	df['n_precincts'] = len(pcnct_df)
 
-	# smooth out the district level polygons
-
-	df.geometry = df.geometry.simplify(.005).buffer(0.001)	
-
-
+	# variables for mapping
 	df['patchx'] = df.geometry.apply(lambda x: tpf.get_coords(x, xcoord=True))
 	df['patchy'] = df.geometry.apply(lambda x: tpf.get_coords(x, xcoord=False))
 	df['color1'] = [palette[i-1] for i in df.dist]
