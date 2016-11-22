@@ -152,7 +152,7 @@ def gradientDescentOT(Iin, I_wgt, Fin, F_wgt, reg=20, alphaW=0):
 	return opt_district, F, cost
 
 
-def make_adjacency_matrix(df):
+def _make_adjacency_matrix(df):
 	'''
 	This function takes a geopandas DataFrame and computesan adjacency matrix 
 	from the polygons in the 'geometry' column. For states with many precincts,
@@ -179,7 +179,7 @@ def make_adjacency_matrix(df):
 	return adj_matrix
 
 
-def check_contiguity(adj_matrix, district_vec):
+def check_contiguity(df, district_var):
 	'''
 	This function takes an adjacency matrix and a vector denoting which
 	row/column belongs to common districts, and determines if the 
@@ -187,10 +187,8 @@ def check_contiguity(adj_matrix, district_vec):
 
 	INPUTS:
 	----------------------------------------------------------------------------
-	adj_matrix: numpy array, element (i,j) = 1 if precincts i and j are adjacent
-				(even at a point, as long as shapely can detect it)
-	district_vec: numpy array, vector denoting the district of each row of the 
-				adjacency matrix
+	df: geopandas DataFrame, precinct level data
+	district_var: string, column of df indicating the district of the precinct
 
 	OUTPUTS:
 	----------------------------------------------------------------------------
@@ -199,17 +197,16 @@ def check_contiguity(adj_matrix, district_vec):
 	'''
 	contig_true = True
 	i_d = 0
-	n_districts = len(np.unique(district_vec))
+	n_districts = len(np.unique(df[district_var]))
 
 	# check if each district is contiguous
 	while contig_true and i_d < n_districts:
 		
-		# slice out relevant subset of adjacency matrix
-		mask = district_vec == i_d
-		dist_adj_mat = adj_matrix[mask, :]
-		dist_adj_mat = dist_adj_mat[:, mask]
+		# make adjacency matrix only for precincts in the district
+		mini_df = df[df[district_var]==i_d]
+		dist_adj_mat = _make_adjacency_matrix(mini_df)
 
-		n_prec = mask.sum()
+		n_prec = len(mini_df)
 
 		# If a district is contiguous, then you should be able to walk from 
 		# any precinct to another in at least n_prec steps or less. 
@@ -358,7 +355,7 @@ def unpack_multipolygons(geo_df, impute_vals=True):
     new_df = geo.GeoDataFrame()
     cols = [c for c in geo_df.columns if 'POP' in c or 'VAP' in c or 'PRE' in c]
     geo_df[cols] = geo_df[cols].astype(float)
-    scale = 1 #
+    scale = 1
 
     # check geometry column for non-polygon objects (multipolygons)
     for i, row in geo_df.iterrows():

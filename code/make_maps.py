@@ -44,7 +44,6 @@ def get_state_data(state, wget=False):
     None, but DataFrame is pickled in ../Data-Files/<state> alongside the shape
     files.
     '''
-
     # make folder if it doesn't already exist
     prefix = '../Data-Files/' + state
     tpf.make_folder(prefix)
@@ -62,7 +61,7 @@ def get_state_data(state, wget=False):
 
     # simplify geometries for faster image rendering
     # bigger number gives a smaller file size
-    geo_df.geometry = geo_df.geometry.simplify(.005).buffer(0.001)    
+    geo_df.geometry = geo_df.geometry.simplify(.006).buffer(0.001)    
 
     # drops totals and other non-precinct observations
     geo_df = geo_df[geo_df.CD_2010 >= 0]
@@ -129,7 +128,7 @@ def get_state_data(state, wget=False):
     return None
 
 
-def get_optimal_districts(pcnct_df, adj_mat, random_start=True, reg=25):
+def get_optimal_districts(pcnct_df, random_start=True, reg=25):
 	'''
 	This function takes a geopandas DataFrame and computes the set of 
 	congressional districts that minimize the total "distance" between precincts
@@ -138,7 +137,6 @@ def get_optimal_districts(pcnct_df, adj_mat, random_start=True, reg=25):
 	INPUTS: 
 	----------------------------------------------------------------------------
 	pcnct_df: geopandas DataFrame listing precinct-level data for a given state
-	adj_mat: numpy array, NxN array showing which precincts are adjacent
 	random_start: boolean(default=True) random initial coordinates for offices
 	reg: scalar, regularization term used in cost function
 
@@ -221,7 +219,7 @@ def get_optimal_districts(pcnct_df, adj_mat, random_start=True, reg=25):
 														  reg=reg, alphaW=alphaW
 														 )		
 			# check contiguity
-			# contig = tpf.check_contiguity(adj_mat, opt_dist)
+			# contig = tpf.check_contiguity(pcnct_df, opt_dist)
 			contig = True
 
 			# update if we are the current best district and contiguous
@@ -270,7 +268,7 @@ def make_state_maps(state, random_start=True):
 	tpf.make_folder('../maps/' + state + '/static')
 	tpf.make_folder('../maps/' + state + '/dynamic')	
 
-	# print initial map
+	# read in data
 	pcnct_df = pd.read_pickle('../Data-Files/' + state + '/precinct_data.p')
 
 	# make palette to be used in all plots (try to keep similar colors apart)
@@ -302,11 +300,10 @@ def make_state_maps(state, random_start=True):
 	df_list.append(district_df)
 
 	# check to see if contiguity is broken in initial districts (islands?, etc.)
-	adj_mat = tpf.make_adjacency_matrix(pcnct_df)
-	contiguity = tpf.check_contiguity(adj_mat, current_dists)
+	# contiguity = tpf.check_contiguity(pcnct_df, 'CD_2010')
 
 	# get optimal districts
-	opt_dist, F_opt, cost0, cost, alphaW = get_optimal_districts(pcnct_df, adj_mat)
+	opt_dist, F_opt, cost0, cost, alphaW = get_optimal_districts(pcnct_df)
 
 	# update dataframe with districts for each precinct
 	pcnct_df['district_final'] = opt_dist
@@ -693,7 +690,7 @@ states = {
 			'AL': 'Alabama',
 			# 'AK': 'Alaska',
 			'AZ': 'Arizona',
-			'AR': 'Arkansas',
+			# 'AR': 'Arkansas',
 			'CA': 'California',
 			'CO': 'Colorado',
 			'CT': 'Connecticut',
@@ -752,14 +749,13 @@ if __name__ == '__main__':
 	hist_labels = ['Current', r"$\alpha_W=0$", r"$\alpha_W=.25$", r"$\alpha_W=.75$"]
 
 	for state in state_list:
-		
-		# get data from shapefiles
-		# get_state_data(state)
+		# get data from shapefiles if not available already
+		get_state_data(state)
 
 		# make maps
 		df_list = make_state_maps(state)
 
-		# make some pretty charts
+		# make some charts
 		make_histplot(df_list[0:3], state, hist_labels)
 		make_barplot(df_list[0:3], state, hist_labels)
 
