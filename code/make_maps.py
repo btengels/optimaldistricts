@@ -159,7 +159,7 @@ def get_optimal_districts(pcnct_df, random_start=True, reg=25):
 	office_loc_list = []
 
 	if random_start is True:
-		num_starts = 15
+		num_starts = 25
 
 		# randomly select initial districts, all districts have equal weight
 		for i in range(num_starts):
@@ -741,13 +741,13 @@ states = {
 
 if __name__ == '__main__':
 
-	pcnct_df = pd.read_pickle('../Data-Files/VA/precinct_data.p')
 	cost_df = pd.DataFrame()
 	state_list = list(states.keys())
 	state_list.sort()
 
 	hist_labels = ['Current', r"$\alpha_W=0$", r"$\alpha_W=.25$", r"$\alpha_W=.75$"]
 
+	state_df_list = []
 	for state in state_list:
 		# get data from shapefiles if not available already
 		get_state_data(state)
@@ -759,4 +759,8 @@ if __name__ == '__main__':
 		make_histplot(df_list[0:3], state, hist_labels)
 		make_barplot(df_list[0:3], state, hist_labels)
 
-		
+		# save results (list of tuples)
+		state_df_list.append((state, df_list))
+
+	# pickle results for later
+	pickle.dump(state_df_list, open(prefix + '../analysis/state_dfs.p', 'wb'), protocol=2) 
