@@ -4,6 +4,8 @@ This repo contains code/data to impliment the districting algorithm used the pap
 
 The districting problem is difficult from a computational standpoint (NP-complete, actually). Composing an optimal set of districts from larger geographic units (census tracts or precincts) simplifies the problem somewhat, but many states have several thousands of precincts. Requirements such as nearly-equal population shares across districts, geographic contiguity, or generating a sufficient number of majority-minority districts, complicates the problem further. 
 
+We overcome this computational hurdle using some recent numerical tools from the Optimal Transport community (the reason we call our districts "optimal"). Given the location of district offices, we use a regularized penalty function and an iterative projection algorithm to quickly determine which precincts best belong to each district (Sinkhorn algorithm). Given a (new) set of districts, we find the best location for district offices, then repeat until convergence (Lloyd's algorithm, similar to a constrained-kmeans algorithm).
+
 ## Code and Data
 The precinct-level data are first taken from [autoredistrict.org](http://autoredistrict.org/). The raw data are comprised of shapefiles (.shp) which we then pull into [GeoPandas](http://geopandas.org/) for our analysis. The data include demographics and presidential election results at the precinct level for all 50 states. 
 
@@ -21,7 +23,9 @@ The code is written in Python and aims to be tidy/readable so that anyone can us
   *  Plots kernel density plots of district-level statistics
   *  Saves a list of dataframes used in making the maps...to be used in ongoing projects (ranking states by a gerrymandering index, looking at the number of competitive seats, etc.)
 
- 
+ ## Work in progress
+ We have a long list of additional features to add and questions to answer using our algorithm. Check back for updates. 
+
 Authors:
 + Benjamin Tengelsen
 + Ryan Murray
