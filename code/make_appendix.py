@@ -103,47 +103,6 @@ def make_appendix_page(state):
 	return None
 
 
-def make_district_df(state, alphaW, groupby_var):
-	'''
-	Makes a df listing key statistics of congressional districts, including
-	the share of the total state population, the share of black population within
-	each district, and the share of republican/democrat votes within each district.
-	
-	INPUTS:
-	-------------------------------------------------------------------------------
-	state: string, key of "states" dict, which pairs states with abbreviations
-	alphaW: scalar in [0,1]
-	groupby_var: string, column of DataFrame indicating the column to groupby over
-	
-	OUTPUTS:
-	-------------------------------------------------------------------------------	
-	df: pandas DataFrame, abbreviated dataframe with districts (rows) and a few key
-		statistics (columns). 
-	'''
-	# read in data, take sum over groupby_var
-	table_df = pd.read_pickle('../tables/'+ state +'/results_'+str(alphaW)+'.p')
-	df = table_df.groupby(groupby_var).agg(np.sum)
-
-	# 
-	df['REP_avg'] = df[['PRES04_REP','PRES08_REP','PRES12_REP']].mean(axis=1)
-	df['DEM_avg'] = df[['PRES04_DEM','PRES08_DEM','PRES12_DEM']].mean(axis=1)
-
-	# add new df columns
-	names = ['pop_pct', 'black_pct', 'hisp_pct', 'R_pct', 'D_pct']	
-
-	df[ names[0] ] = df.POP_TOTAL/df.POP_TOTAL.sum()
-	df[ names[1] ] = df.POP_BLACK/df.POP_TOTAL
-	df[ names[2] ] = df.POP_HISPAN/df.POP_TOTAL
-	df[ names[3] ] = df['REP_avg']/df[['REP_avg','DEM_avg']].sum(axis=1)
-	df[ names[4] ] = df['DEM_avg']/df[['REP_avg','DEM_avg']].sum(axis=1)
-	df[ 'vote_result' ] = 0
-	df.loc[df['D_pct']>.6, 'vote_result'] = 1
-	df.loc[df['D_pct']<.4, 'vote_result'] = 2
-
-	vars = names.append('vote_result')
-	return df[names]
-
-
 def make_histplot(df_list, state, labels):	
 	'''
 	Takes table output from make_district_df() and plots it. This allows us to 
@@ -165,18 +124,18 @@ def make_histplot(df_list, state, labels):
 	
 	# initialize figure
 	xlabels = ['Share of Republican Votes','Black Population (percent)','Hispanic Population (percent)']
-	for ivar, var in enumerate(['R_pct','black_pct','hisp_pct']):
-		fig, ax = sns.plt.subplots(1,2, figsize=(14,5), sharey=True)
+	for ivar, var in enumerate(['rep_pct','blk_pct','hisp_pct']):
+		fig, ax = sns.plt.subplots(1, 2, figsize=(14, 5), sharey=True)
 		bins = 10
-		kde_kws = {"shade": True, 'kernel':'gau','bw':.05,'clip':(0,1)}
+		kde_kws = {"shade": True, 'kernel':'gau', 'bw':.05}
 
 		for i in range(2):
 			old_df = df_list[0]
-			new_df = df_list[1+i]			
-			sns.distplot(old_df[var], hist=False, bins=bins, kde_kws=kde_kws, ax=ax[i], label=labels[0])			
-			sns.distplot(new_df[var], hist=False, bins=bins, kde_kws=kde_kws, ax=ax[i], label=labels[1+i])					
+			new_df = df_list[1 + i]			
+			sns.distplot(old_df[var]/100, hist=False, bins=bins, kde_kws=kde_kws, ax=ax[i], label=labels[0])			
+			sns.distplot(new_df[var]/100, hist=False, bins=bins, kde_kws=kde_kws, ax=ax[i], label=labels[1 + i])					
 			
-			ax[i].set_xlim(0,1)
+			ax[i].set_xlim(0, 1)
 			ax[i].set_xlabel(xlabels[ivar], fontsize=14)
 			ax[0].set_ylabel('Number of Districts', fontsize=14)
 			ax[i].legend(bbox_to_anchor=(.78, -.15), ncol=2, fontsize=14)
@@ -210,8 +169,8 @@ def make_barplot(df_list, state, labels):
 	fig, ax = sns.plt.subplots(n_subplots, 1, figsize=(7, 5), sharex=True)
 	
 	for idf, df in enumerate(df_list):
-		df.sort_values(by='R_pct', inplace=True)
-		colors = [cmap(i/2) for i in df['R_pct'].values]
+		df.sort_values(by='rep_pct', inplace=True)
+		colors = [cmap(i/2) for i in df['rep_pct'].values]
 		
 		x1 = np.arange(len(df))
 		x2 = np.arange(len(df) + 1)
@@ -219,7 +178,9 @@ def make_barplot(df_list, state, labels):
 		y2 = np.ones(len(df) + 1,)
 		
 		ax[idf].bar(x1, y1, color='r', linewidth=0, width=1.0, alpha=.8)
-		ax[idf].bar(x1, df['D_pct'].values, color='b', linewidth=0, width=1.0, alpha=.8)
+		ax[idf].bar(x1, df['dem_pct'].values/100, color='b', linewidth=0, width=1.0, alpha=.8)
+		
+		# horizontile line at .5
 		ax[idf].plot(x2, y2*.5, color='w', linewidth=.2, alpha=.8)
 
 		ax[idf].set_xticklabels([])
@@ -250,7 +211,7 @@ states = {
 			'KS':'Kansas',
 			'KY':'Kentucky', 
 			'LA':'Louisiana',
-			'MA':'Maine',
+			# 'ME':'Maine',
 			'MD':'Maryland',
 			'MA':'Massachusetts',
 			'MI':'Michigan',
@@ -309,14 +270,17 @@ if __name__ == '__main__':
 
 		# make a list of dataframes, one for the current boundaries and one for each value of alpha
 		state_df_list = []
-		state_df_list.append( make_district_df(state, 0.0, 'CD_2010') )		
+		df = pd.read_pickle('../tables/'+ state +'/results_before.p')
+		state_df_list.append( df )		
 
 		for alphaW in alphaW_list:
-			state_df_list.append( make_district_df(state, alphaW, 'district_iter19') )
+			df = pd.read_pickle('../tables/'+ state +'/results_'+str(alphaW)+'.p')	
+			state_df_list.append( df )
 	
 		# make figures from list of dataframes
-		make_histplot( state_df_list, state, ['Current',r"$\alpha_W=0$",r"$\alpha_W=.25$", r"$\alpha_W=.75$"])
-		make_barplot( state_df_list, state, ['Current',r"$\alpha_W=0$",r"$\alpha_W=.25$", r"$\alpha_W=.75$"])
+		titles = ['Current',r"$\alpha_W=0$",r"$\alpha_W=.25$", r"$\alpha_W=.75$"]
+		make_histplot( state_df_list, state, titles)
+		make_barplot( state_df_list, state, titles)
 
 		# write page in appendix file for each state
 		make_appendix_page(state)
@@ -339,5 +303,5 @@ if __name__ == '__main__':
 		combined_df_list.append(US_df)
 
 	make_folder('../analysis/US')
-	make_histplot( combined_df_list, 'US', ['Current',r"$\alpha_W=0$",r"$\alpha_W=.25$", r"$\alpha_W=.75$"])
-	make_barplot( combined_df_list, 'US', ['Current',r"$\alpha_W=0$",r"$\alpha_W=.25$", r"$\alpha_W=.75$"])
+	make_histplot( combined_df_list, 'US', titles)
+	make_barplot( combined_df_list, 'US', titles)
