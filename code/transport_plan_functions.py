@@ -334,7 +334,7 @@ def _transportGradient(I, I_wgt, F, F_wgt, trasport_map, DistMat):
 	return grad_F
 
 
-def unpack_multipolygons(geo_df):
+def unpack_multipolygons(geo_df, impute_vals=True):
     '''
     Takes a vector of polygons and/or multipolygons. Returns an array of only 
     polygons by taking multipolygons and putting the underlying polygons in a 
@@ -344,9 +344,10 @@ def unpack_multipolygons(geo_df):
     INPUTS: 
     ----------------------------------------------------------------------------
     geo: numpy array, array of shapely polygons/multipolygons
-    districts: numpy array, vector containing info on each precinct in this case
-               we have ints representing districts, but any array of any type of
-               object can work
+    impute_vals: boolean(default=True) use area shares to impute populations or
+    			 other variabels for polygons within a multipolygon. If false,
+    			 population/political variables are duplicated across all 
+    			 polygons within a multipolygon. 
     
     OUTPUTS:
     ----------------------------------------------------------------------------
@@ -357,6 +358,7 @@ def unpack_multipolygons(geo_df):
     new_df = geo.GeoDataFrame()
     cols = [c for c in geo_df.columns if 'POP' in c or 'VAP' in c or 'PRE' in c]
     geo_df[cols] = geo_df[cols].astype(float)
+    scale = 1 #
 
     # check geometry column for non-polygon objects (multipolygons)
     for i, row in geo_df.iterrows():
@@ -365,12 +367,17 @@ def unpack_multipolygons(geo_df):
             new_df = new_df.append(row)
 
         else:
+        	# unpack multipolygons, perhaps impute numerical variables
             multi_row = row.copy()
-            total_area = multi_row.geometry.area
+            total_area = multi_row.geometry.area            
             for poly in multi_row.geometry:
+
+                if impute_vals is True:
+                    scale = (poly.area/total_area)
+
                 row.geometry = poly
-                row[cols] *= (poly.area/total_area)
-                row.ALAND10 *= (poly.area/total_area)
+                row[cols] *= scale
+                row.ALAND10 *= scale
                 row.area = poly.area        
                 new_df = new_df.append(row)
 

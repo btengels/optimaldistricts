@@ -121,7 +121,7 @@ def get_state_data(state, wget=False):
 
     # simplify geometries for faster image rendering
     # bigger number gives a smaller file size
-    geo_df.geometry = geo_df.geometry.simplify(.0001) 
+    geo_df.geometry = geo_df.geometry.simplify(.005).buffer(0.001)
 
     # pickle dataframe for future use
     pickle.dump(geo_df, open(prefix + '/precinct_data.p', 'wb'), protocol=2) 
@@ -161,7 +161,7 @@ def get_optimal_districts(pcnct_df, adj_mat, random_start=True, reg=25):
 	office_loc_list = []
 
 	if random_start is True:
-		num_starts = 10	
+		num_starts = 15
 
 		# randomly select initial districts, all districts have equal weight
 		for i in range(num_starts):
@@ -197,7 +197,7 @@ def get_optimal_districts(pcnct_df, adj_mat, random_start=True, reg=25):
 	while contiguity is True and alphaW < 1:
 		print(state, alphaW)
 		# initialize cost_best variable
-		cost_best = 1
+		cost_best = 20
 
 		# find the best result over (perhaps several) starting points
 		for F_loc0 in office_loc_list:
@@ -223,7 +223,6 @@ def get_optimal_districts(pcnct_df, adj_mat, random_start=True, reg=25):
 			# check contiguity
 			# contig = tpf.check_contiguity(adj_mat, opt_dist)
 			contig = True
-			print(state, alphaW, cost_best)
 
 			# update if we are the current best district and contiguous
 			if cost < cost_best and contig is True:
@@ -235,8 +234,9 @@ def get_optimal_districts(pcnct_df, adj_mat, random_start=True, reg=25):
 				alphaW_best = alphaW	
 
 		# update alphaW
-		if cost_best < 1:
+		if cost_best < 20:
 			alphaW += .1
+			opt_district_best = opt_district_best.astype(int)
 
 			# NOTE: working on check_contiguity(), so exit at alphaW=0 for now
 			contiguity = False
@@ -268,8 +268,7 @@ def make_state_maps(state, random_start=True):
 	# make map folders if not existent
 	tpf.make_folder('../maps/' + state)
 	tpf.make_folder('../maps/' + state + '/static')
-	tpf.make_folder('../maps/' + state + '/dynamic')
-	tpf.make_folder('../tables/' + state)
+	tpf.make_folder('../maps/' + state + '/dynamic')	
 
 	# print initial map
 	pcnct_df = pd.read_pickle('../Data-Files/' + state + '/precinct_data.p')
@@ -292,8 +291,10 @@ def make_state_maps(state, random_start=True):
 	df_list = []
 
 	# open/save figure for current districts
-	filename = '../maps/' + state + '/static/before.png'		
-	patches = plot_state(pcnct_df, 'CD_2010', ax, fig, palette, filename)
+	filename = '../maps/' + state + '/static/before.png'
+	current_dists = pcnct_df['CD_2010'].values.astype(int)
+	colors = np.array([palette[i] for i in current_dists])
+	patches = plot_state(pcnct_df, colors, ax, fig, filename)
 	
 	# save html figure for current districts
 	filename = '../maps/' + state + '/dynamic/before.html'
@@ -302,16 +303,16 @@ def make_state_maps(state, random_start=True):
 
 	# check to see if contiguity is broken in initial districts (islands?, etc.)
 	adj_mat = tpf.make_adjacency_matrix(pcnct_df)
-	contiguity = tpf.check_contiguity(adj_mat, pcnct_df.CD_2010.values)
+	contiguity = tpf.check_contiguity(adj_mat, current_dists)
 
 	# get optimal districts
-	opt_district, F_opt, cost0, cost, alphaW = get_optimal_districts(pcnct_df, adj_mat)
+	opt_dist, F_opt, cost0, cost, alphaW = get_optimal_districts(pcnct_df, adj_mat)
 
 	# update dataframe with districts for each precinct
-	pcnct_df['district_final'] = opt_district
+	pcnct_df['district_final'] = opt_dist
 
 	# update colors on existing figure for optimal districting solution
-	colors = update_colors(pcnct_df, 'district_final')
+	colors = np.array([palette[i] for i in opt_dist])
 	patches.set_color(colors)
 
 	# make sure bounding box is consistent across figures
@@ -319,8 +320,15 @@ def make_state_maps(state, random_start=True):
 	ax.set_ylim(ylim)
 
 	# plot district offices and save figure
-	stars =	ax.scatter(F_opt[:, 0], F_opt[:, 1], color='black', marker='*', s=30, alpha=.7)	
-	filename = '../maps/' + state + '/static/' + str(alphaW).replace('.', '_') + '_after.png'
+	stars =	ax.scatter(F_opt[:, 0], F_opt[:, 1],
+						 color='black',
+						 marker='*', 
+						 s=30, 
+						 alpha=.7
+					   )	
+
+	prefix = '../maps/' + state + '/static/'
+	filename = prefix + str(alphaW).replace('.', '_') + '_after.png'
 	fig.savefig(filename, bbox_inches='tight', dpi=300)
 	stars.remove()
 
@@ -335,14 +343,14 @@ def make_state_maps(state, random_start=True):
 
 	# keep track of alphaW used to generate optimal districts
 	df['alphaW'] = alphaW
-	df.to_pickle('../tables/' + state + '/results_' + str(alphaW) + '.p')
 
+	# keep before/after district-level dataframes together
 	df_list.append(df)
 
 	return df_list
 
 
-def plot_state(geo_df, district_group, ax, fig, palette, filename, F_opt=None):
+def plot_state(geo_df, colors, ax, fig, filename, F_opt=None):
 	'''
 	Function takes geopandas DataFrame and plots the precincts colored according
 	to their congressional district. Saves figure at path "filename."
@@ -356,10 +364,8 @@ def plot_state(geo_df, district_group, ax, fig, palette, filename, F_opt=None):
 	fig: matplotlib figure object, used to save final figure
 	filename: string, path to saved figure
 	F_opt: np.array, plots the location of district offices if provided
-	'''
-	
+	'''	
 	# plot patches, colored according to district
-	colors = update_colors(geo_df, district_group)
 	patches = plot_patches(geo_df.geometry.values, colors, ax, lw=.1)
 	
 	# plot stars for office locations
@@ -393,11 +399,14 @@ def make_bokeh_map(pcnct_df, groupvar, palette, filename):
 	----------------------------------------------------------------------------
 	df: pandas DataFrame, contrains district-level information
 	'''		
-	output_file(filename)	
-	
-	pcnct_df.geometry = pcnct_df.geometry.simplify(.005).buffer(0.001)
+	output_file(filename)		
 
+	# aggregate precincts by district
 	df = pcnct_df.dissolve(by=groupvar, aggfunc=np.sum)
+
+	# aggregating can create multi-polygons, can't plot in bokeh so unpack those
+	df = tpf.unpack_multipolygons(df, impute_vals=False)
+
 	df['area'] = df.geometry.area	
 	df['DEM'] = df[['PRES04_DEM','PRES08_DEM','PRES12_DEM']].mean(axis=1)
 	df['REP'] = df[['PRES04_REP','PRES08_REP','PRES12_REP']].mean(axis=1)
@@ -411,9 +420,10 @@ def make_bokeh_map(pcnct_df, groupvar, palette, filename):
 	df['dist'] = df.index.values.astype(int) + 1
 	df['n_precincts'] = len(pcnct_df)
 
-	# drop the tiny tiny polygons (experimenting a bit here...)
-	df.geometry = df.geometry.simplify(.005).buffer(0.001)
-	df = df[df.area> df.area.quantile(.05)]
+	# smooth out the district level polygons
+
+	df.geometry = df.geometry.simplify(.005).buffer(0.001)	
+
 
 	df['patchx'] = df.geometry.apply(lambda x: tpf.get_coords(x, xcoord=True))
 	df['patchy'] = df.geometry.apply(lambda x: tpf.get_coords(x, xcoord=False))
@@ -548,30 +558,6 @@ def make_palette(n_districts, cmap=plt.cm.Paired, hex=False):
 	return palette
 
 
-def update_colors(geo_df, district_col, alpha=1):
-	'''
-	Takes a geopandas DataFrame, makes a color palette, and assigns a color to
-	each congressional district to a vector "colors"
-
-	INPUTS: 
-	----------------------------------------------------------------------------
-	geo_df: geopandas DataFrame, has precinct-level geometries and districts
-	district_col: string, column indicating congressional districts
-	alpha: scalar in [0,1], default alpha (transparency) for plots
-
-	OUTPUTS:
-	----------------------------------------------------------------------------
-	colors: np.array, Nx1 array of colors, either rgba tuple or hex string
-	'''
-	n_districts = int(geo_df.CD_2010.max()) + 1
-	
-	pal = make_palette(n_districts)
-	dists = geo_df[district_col].values.astype(int)
-	colors = np.array([(pal[i][0], pal[i][1], pal[i][2], alpha) for i in dists])
-
-	return colors
-
-
 def make_histplot(df_list, state, labels):
 	'''
 	Takes table output from make_district_df() and plots it. This allows us to 
@@ -644,7 +630,8 @@ def make_histplot(df_list, state, labels):
 				output_file("../analysis/"+state+"/"+var.lower()+"_kde.html")		
 				save(p)	
 
-		# fig.savefig('../analysis/'+state+'/'+var+'_kde.pdf', bbox_inches='tight', dpi=100)
+		# filename = '../analysis/'+state+'/'+var+'_kde.pdf'
+		# fig.savefig(filename, bbox_inches='tight', dpi=100)
 		plt.close()
 
 	return None
@@ -683,8 +670,9 @@ def make_barplot(df_list, state, labels):
 		y1 = np.ones(len(df),)
 		y2 = np.ones(len(df) + 1,)
 		
+		dem_bar = df['DEM_PCT'].values/100
 		ax[idf].bar(x1, y1, color='r', linewidth=0, width=1.0, alpha=.8)
-		ax[idf].bar(x1, df['DEM_PCT'].values/100, color='b', linewidth=0, width=1.0, alpha=.8)
+		ax[idf].bar(x1, dem_bar, color='b', linewidth=0, width=1.0, alpha=.8)
 		
 		# horizontile line at .5
 		ax[idf].plot(x2, y2*.5, color='w', linewidth=.2, alpha=.8)
@@ -694,7 +682,8 @@ def make_barplot(df_list, state, labels):
 		ax[idf].set_ylim(0, 1)
 		ax[idf].set_ylabel(labels[idf])		
 
-	fig.savefig('../analysis/' + state + '/barplot.pdf', bbox_inches='tight', dpi=100)
+	filename = '../analysis/' + state + '/barplot.pdf'
+	fig.savefig(filename, bbox_inches='tight', dpi=100)
 	plt.close()
 
 	return None
@@ -765,7 +754,7 @@ if __name__ == '__main__':
 	for state in state_list:
 		
 		# get data from shapefiles
-		get_state_data(state)
+		# get_state_data(state)
 
 		# make maps
 		df_list = make_state_maps(state)
