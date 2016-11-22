@@ -24,10 +24,10 @@ The code is written in Python and aims to be tidy/readable and simple as possibl
 
 ## A work in progress
 We have a long list of additional features to add and questions to answer using our algorithm. Some of our short-term TODOs include:
-  1. parallelize everything
-  2. improve/speed up checks for contiguity
-  3. optimally determine the regularization and demographic distance parameters
-  4. measure "wasted" voter shares
-  5. generalize functions in `transport\_plan_functions.py` so that an arbitrary geopandas DataFrame with the necessary lat/lon variables and some categorical column can solve the districting problem (sometimes called the "warehousing problem").
+  1. Parallelize loops over states
+  2. Improve/speed up checks for contiguity, figure out how to handle states like Michigan without hardcoding
+  3. Optimally determine the regularization and demographic distance parameters
+  4. Measure "wasted" voter shares (a la Wisconsin supreme court case)
+  5. Generalize functions in `transport_plan_functions.py` so that an arbitrary Geopandas DataFrame with the necessary lat/lon variables can solve the districting problem (sometimes called the "warehousing problem").
  
 Thanks for reading and check back for updates!
