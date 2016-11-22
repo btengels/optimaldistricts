@@ -23,8 +23,12 @@ The code is written in Python and aims to be tidy/readable so that anyone can us
   *  Plots kernel density plots of district-level statistics
   *  Saves a list of dataframes used in making the maps...to be used in ongoing projects (ranking states by a gerrymandering index, looking at the number of competitive seats, etc.)
 
- ## Work in progress
- We have a long list of additional features to add and questions to answer using our algorithm. Check back for updates. 
+## Work in progress
+We have a long list of additional features to add and questions to answer using our algorithm. Some of our short-term TODOs include:
+- improve/speed up checks for contiguity
+- optimally determine the regularization parameter
+- generalize transport functions for user-provided distance metrics/coordinates so any geopandas user can solve the districting problem (sometimes called the "warehousing problem").
+ Check back for updates. 
 
 Authors:
 + Benjamin Tengelsen
