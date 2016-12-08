@@ -1,3 +1,11 @@
+# 1 - to clean up maps: fatten up boundaries and remove intersection
+# 2 - figure out which states should be horizontile
+# 3 - scale units by actual distance in miles to fix aspect ratio 
+# 4 - look into using haversine distance instead of euclidian distance
+
+# ranking states/districts
+# 5 - merge congressional election results from Alex - do some counterfactuals 
+
 from __future__ import division
 import scipy as sp
 import numpy as np
@@ -118,12 +126,12 @@ def gradientDescentOT(Iin, I_wgt, Fin, F_wgt, reg=20, alphaW=0):
 	DistMat = distance_metric(I, F, alphaW)
 	transp_map, u, cost = _computeSinkhorn(I_wgt, F_wgt, DistMat, reg, uinit)
 
-	#Hard coding the number of Newton steps for now. 
+	# Hard coding the number of Newton steps for now... 
 	newtonSteps = 30
 	lineSearchN = 20
 	lineSearchRange = 1
 	costVec = np.zeros(lineSearchN)
-	stepsize_vec = np.linspace(0,lineSearchRange,lineSearchN)
+	stepsize_vec = np.linspace(0, lineSearchRange, lineSearchN)
 
 	# gradient descent algorithm
 	for i_step in range(1, newtonSteps):
@@ -271,7 +279,7 @@ def _computeSinkhorn(I_wgt, F_wgt, Distmat, reg, uin):
 			break
 
 		uprev = u.copy()
-		v = np.divide(F_wgt, np.dot(K.T,u))
+		v = np.divide(F_wgt, np.dot(K.T, u))
 		u = 1./np.dot(Kp, v)
 		
 		# Periodically checking convergency criterion 
@@ -409,7 +417,7 @@ def get_coords(T, xcoord=True):
 		patchx, patchy = T.exterior.coords.xy
 	
 	# can choose to return either the x or y coordinates 
-	# (this is admittedly a bit odd but is required by pandas' "apply" function)
+	# (this odd but is allows for pandas' "apply" function)
 	if xcoord is True:
 		return list(patchx)
 	else:
@@ -418,8 +426,8 @@ def get_coords(T, xcoord=True):
 
 def make_folder(path):
     '''
-    This function makes folders on the fly, checking first to see if the folder 
-    is already there. 
+    This function makes directories on the fly at location 'path'. Checks first 
+    to see if the directory is already there. If not, it makes the directory.
 
     INPUTS
     ----------------------------------------------------------------------------    
@@ -438,6 +446,4 @@ def make_folder(path):
             raise
 
     return None
-
-
 

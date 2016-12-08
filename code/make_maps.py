@@ -61,7 +61,7 @@ def get_state_data(state, wget=False):
 
     # simplify geometries for faster image rendering
     # bigger number gives a smaller file size
-    geo_df.geometry = geo_df.geometry.simplify(.006).buffer(0.001)    
+    geo_df.geometry = geo_df.geometry.simplify(.006).buffer(0.001)
 
     # drops totals and other non-precinct observations
     geo_df = geo_df[geo_df.CD_2010 >= 0]
@@ -70,6 +70,16 @@ def get_state_data(state, wget=False):
     lonlat = np.array([t.centroid.coords.xy for t in geo_df.geometry])
     geo_df['INTPTLON10'] = lonlat[:, 0]
     geo_df['INTPTLAT10'] = lonlat[:, 1]
+
+    # -------------------------------------------------------------------------
+    # ADJUST ASPECT RATIO HERE:
+    # -------------------------------------------------------------------------
+
+
+
+
+	# -------------------------------------------------------------------------
+	# -------------------------------------------------------------------------    
 
     # make sure congressional districts are numbered starting at 0
     geo_df.CD_2010 -= geo_df.CD_2010.min()
@@ -106,18 +116,18 @@ def get_state_data(state, wget=False):
     if state in ['NC', 'PA', 'NJ', 'CT', 'OH', 'TX', 'FL']:
         water_cut = 8
 
-    if state in ['CA', 'MA', 'MI', 'WA']:
+    if state in ['CA', 'MA', 'MI', 'WA', 'MN']:
         water_cut = 4
 
     if state in ['IL', 'WI', 'NY', 'MD', 'LA', 'AK']:
         water_cut = 2
     
-    if water_cut<20:
+    if water_cut < 20:
         geo_df['VTDST10'] = geo_df['VTDST10'].astype(str)
         geo_df = geo_df[ geo_df['VTDST10'].str.contains('ZZ') == False]
         geo_df = geo_df[ geo_df['VTDST10'].str.contains('BAY') == False]
         geo_df = geo_df[ geo_df['VTDST10'].str.contains('OCEAN') == False]    
-        geo_df =  geo_df[np.abs(geo_df['AWATER10']/geo_df['ALAND10'])<water_cut]
+        geo_df = geo_df[np.abs(geo_df['AWATER10']/geo_df['ALAND10']) < water_cut]
 
     # unpack multipolygons
     geo_df = tpf.unpack_multipolygons(geo_df)
@@ -175,9 +185,9 @@ def get_optimal_districts(pcnct_df, random_start=True, reg=25):
 			# df['pop_area'] = df.POP_TOTAL/(df.area*1000)
 			pop_argmax = df['POP_TOTAL'].argmax()
 
-			office_loc0[i,0] = df['INTPTLON10'].loc[pop_argmax]
-			office_loc0[i,1] = df['INTPTLAT10'].loc[pop_argmax]
-			office_loc0[i,2] = df['POP_BLACK'].sum()/df['POP_TOTAL'].sum()	
+			office_loc0[i, 0] = df['INTPTLON10'].loc[pop_argmax]
+			office_loc0[i, 1] = df['INTPTLAT10'].loc[pop_argmax]
+			office_loc0[i, 2] = df['POP_BLACK'].sum()/df['POP_TOTAL'].sum()	
 		
 		office_loc_list.append(office_loc0) 
 
@@ -219,8 +229,8 @@ def get_optimal_districts(pcnct_df, random_start=True, reg=25):
 														  reg=reg, alphaW=alphaW
 														 )		
 			# check contiguity
-			# contig = tpf.check_contiguity(pcnct_df, opt_dist)
-			contig = True
+			contiguity = tpf.check_contiguity(pcnct_df, opt_dist)
+			# contig = True
 
 			# update if we are the current best district and contiguous
 			if cost < cost_best and contig is True:
@@ -689,53 +699,53 @@ def make_barplot(df_list, state, labels):
 states = {
 			'AL': 'Alabama',
 			# 'AK': 'Alaska',
-			'AZ': 'Arizona',
-			# 'AR': 'Arkansas',
-			'CA': 'California',
-			'CO': 'Colorado',
-			'CT': 'Connecticut',
-			'FL': 'Florida',
-			'GA': 'Georgia',
-			# 'HI': 'Hawaii', #problem here
-			'ID': 'Idaho',
-			'IL': 'Illinois',
-			'IN': 'Indiana',
-			'IA': 'Iowa',
-			'KS': 'Kansas',
-			'KY': 'Kentucky', 
-			'LA': 'Louisiana',
-			'ME': 'Maine',
-			'MD': 'Maryland',
-			'MA': 'Massachusetts',
-			'MI': 'Michigan',
-			'MN': 'Minnesota',
-			'MS': 'Mississippi',
-			'MO': 'Missouri',
-			# 'MT': 'Montana',
-			'NE': 'Nebraska',
-			'NV': 'Nevada', 
-			'NH': 'New Hampshire',
-			'NJ': 'New Jersey',
-			'NM': 'New Mexico',
-			'NY': 'New York',
-			'NC': 'North Carolina',
-			# 'ND': 'North Dakota',
-			'OH': 'Ohio',
-			'OK': 'Oklahoma',
-			'OR': 'Oregon',
-			'PA': 'Pennsylvania',
-			'RI': 'Rhode Island',
-			'SC': 'South Carolina',
-			# 'SD': 'South Dakota',
-			'TN': 'Tennessee',
-			'TX': 'Texas',
-			'UT': 'Utah',
-			# 'VT': 'Vermont',
-			'VA': 'Virginia',
-			'WA': 'Washington',
-			'WV': 'West Virginia',
-			'WI': 'Wisconsin',
-			# 'WY':'Wyoming'
+			# 'AZ': 'Arizona',
+			# # 'AR': 'Arkansas',
+			# 'CA': 'California',
+			# 'CO': 'Colorado',
+			# 'CT': 'Connecticut',
+			# 'FL': 'Florida',
+			# 'GA': 'Georgia',
+			# # 'HI': 'Hawaii', #problem here
+			# 'ID': 'Idaho',
+			# 'IL': 'Illinois',
+			# 'IN': 'Indiana',
+			# 'IA': 'Iowa',
+			# 'KS': 'Kansas',
+			# 'KY': 'Kentucky', 
+			# 'LA': 'Louisiana',
+			# 'ME': 'Maine',
+			# 'MD': 'Maryland',
+			# 'MA': 'Massachusetts',
+			# 'MI': 'Michigan',
+			# 'MN': 'Minnesota',
+			# 'MS': 'Mississippi',
+			# 'MO': 'Missouri',
+			# # 'MT': 'Montana',
+			# 'NE': 'Nebraska',
+			# 'NV': 'Nevada', 
+			# 'NH': 'New Hampshire',
+			# 'NJ': 'New Jersey',
+			# 'NM': 'New Mexico',
+			# 'NY': 'New York',
+			# 'NC': 'North Carolina',
+			# # 'ND': 'North Dakota',
+			# 'OH': 'Ohio',
+			# 'OK': 'Oklahoma',
+			# 'OR': 'Oregon',
+			# 'PA': 'Pennsylvania',
+			# 'RI': 'Rhode Island',
+			# 'SC': 'South Carolina',
+			# # 'SD': 'South Dakota',
+			# 'TN': 'Tennessee',
+			# 'TX': 'Texas',
+			# 'UT': 'Utah',
+			# # 'VT': 'Vermont',
+			# 'VA': 'Virginia',
+			# 'WA': 'Washington',
+			# 'WV': 'West Virginia',
+			# 'WI': 'Wisconsin',
+			# # 'WY':'Wyoming'
 			}
 
 
@@ -750,12 +760,12 @@ if __name__ == '__main__':
 	state_df_list = []
 	for state in state_list:
 		# get data from shapefiles if not available already
-		get_state_data(state)
+		# get_state_data(state)
 
 		# make maps
 		df_list = make_state_maps(state)
 
-		# make some charts
+		# make charts for each state
 		make_histplot(df_list[0:3], state, hist_labels)
 		make_barplot(df_list[0:3], state, hist_labels)
 
@@ -763,4 +773,4 @@ if __name__ == '__main__':
 		state_df_list.append((state, df_list))
 
 	# pickle results for later
-	pickle.dump(state_df_list, open(prefix + '../analysis/state_dfs.p', 'wb'), protocol=2) 
+	pickle.dump(state_df_list, open('../analysis/state_dfs.p', 'wb'), protocol=2) 
