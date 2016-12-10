@@ -1,4 +1,4 @@
-# 1 - to clean up maps: fatten up boundaries and remove intersection
+# TODO list
 # 2 - figure out which states should be horizontile
 # 3 - scale units by actual distance in miles to fix aspect ratio 
 # 4 - look into using haversine distance instead of euclidian distance
@@ -409,12 +409,13 @@ def get_coords(T, xcoord=True):
 	patchx: list, sequence of x coordinates corresponding to patchy
 	patchy: list, sequence of y coordinates corresponding to patchx
 	'''
-	if type(T) == shapely.geometry.polygon.Polygon:
-		patchx, patchy = T.exterior.coords.xy
+	# if type(T) == shapely.geometry.polygon.Polygon:
+	
 
-	elif type(T) == shapely.geometry.multipolygon.MultiPolygon:
+	if type(T) == shapely.geometry.multipolygon.MultiPolygon:
 		T = T[0]
-		patchx, patchy = T.exterior.coords.xy
+	# patchx, patchy = T.exterior.coords.xy
+	patchx, patchy = T.exterior.coords.xy
 	
 	# can choose to return either the x or y coordinates 
 	# (this odd but is allows for pandas' "apply" function)

@@ -229,8 +229,8 @@ def get_optimal_districts(pcnct_df, random_start=True, reg=25):
 														  reg=reg, alphaW=alphaW
 														 )		
 			# check contiguity
-			contiguity = tpf.check_contiguity(pcnct_df, opt_dist)
-			# contig = True
+			# contiguity = tpf.check_contiguity(pcnct_df, opt_dist)
+			contig = True
 
 			# update if we are the current best district and contiguous
 			if cost < cost_best and contig is True:
@@ -413,9 +413,17 @@ def make_bokeh_map(pcnct_df, groupvar, palette, filename):
 
 	# aggregating can create multi-polygons, can't plot in bokeh so unpack those
 	df = tpf.unpack_multipolygons(df, impute_vals=False)
+	df.geometry = [shapely.geometry.polygon.asPolygon(g.exterior) for g in df.geometry.values]
 
 	# smooth out the district level polygons
-	df.geometry = df.geometry.simplify(.005).buffer(0.001)	
+	df.geometry = df.geometry.simplify(.007).buffer(0.007)
+
+	# remove bleed (nonempty intersection) resulting from buffer command
+	for ig, g in enumerate(df.geometry):
+		for ig2, g2 in enumerate(df.geometry):
+			if ig != ig2:
+				g -= g2
+		df.geometry.iloc[ig] = g
 
 	# carry over important variables into the district-level dataframe 
 	df['area'] = df.geometry.area	
@@ -492,6 +500,7 @@ def make_bokeh_map(pcnct_df, groupvar, palette, filename):
 	p.axis[1].ticker.num_minor_ticks = 0
 
 	# save output as html file	
+	# show(p)
 	save(p)
 
 	# return district level DataFrame
@@ -699,53 +708,53 @@ def make_barplot(df_list, state, labels):
 states = {
 			'AL': 'Alabama',
 			# 'AK': 'Alaska',
-			# 'AZ': 'Arizona',
-			# # 'AR': 'Arkansas',
-			# 'CA': 'California',
-			# 'CO': 'Colorado',
-			# 'CT': 'Connecticut',
-			# 'FL': 'Florida',
-			# 'GA': 'Georgia',
-			# # 'HI': 'Hawaii', #problem here
-			# 'ID': 'Idaho',
-			# 'IL': 'Illinois',
-			# 'IN': 'Indiana',
-			# 'IA': 'Iowa',
-			# 'KS': 'Kansas',
-			# 'KY': 'Kentucky', 
-			# 'LA': 'Louisiana',
-			# 'ME': 'Maine',
-			# 'MD': 'Maryland',
-			# 'MA': 'Massachusetts',
-			# 'MI': 'Michigan',
-			# 'MN': 'Minnesota',
-			# 'MS': 'Mississippi',
-			# 'MO': 'Missouri',
-			# # 'MT': 'Montana',
-			# 'NE': 'Nebraska',
-			# 'NV': 'Nevada', 
-			# 'NH': 'New Hampshire',
-			# 'NJ': 'New Jersey',
-			# 'NM': 'New Mexico',
-			# 'NY': 'New York',
-			# 'NC': 'North Carolina',
-			# # 'ND': 'North Dakota',
-			# 'OH': 'Ohio',
-			# 'OK': 'Oklahoma',
-			# 'OR': 'Oregon',
-			# 'PA': 'Pennsylvania',
-			# 'RI': 'Rhode Island',
-			# 'SC': 'South Carolina',
-			# # 'SD': 'South Dakota',
-			# 'TN': 'Tennessee',
-			# 'TX': 'Texas',
-			# 'UT': 'Utah',
-			# # 'VT': 'Vermont',
-			# 'VA': 'Virginia',
-			# 'WA': 'Washington',
-			# 'WV': 'West Virginia',
-			# 'WI': 'Wisconsin',
-			# # 'WY':'Wyoming'
+			# 'AZ': 'Arizona',TODO
+			# 'AR': 'Arkansas',
+			'CA': 'California',
+			'CO': 'Colorado',
+			'CT': 'Connecticut',
+			'FL': 'Florida',
+			'GA': 'Georgia',
+			# 'HI': 'Hawaii', #problem here
+			'ID': 'Idaho',
+			'IL': 'Illinois',
+			'IN': 'Indiana',
+			'IA': 'Iowa',
+			'KS': 'Kansas',
+			'KY': 'Kentucky', 
+			'LA': 'Louisiana',
+			'ME': 'Maine',
+			'MD': 'Maryland',
+			'MA': 'Massachusetts',
+			'MI': 'Michigan',
+			'MN': 'Minnesota',
+			'MS': 'Mississippi',
+			'MO': 'Missouri',
+			# 'MT': 'Montana',
+			'NE': 'Nebraska',
+			'NV': 'Nevada', 
+			'NH': 'New Hampshire',
+			'NJ': 'New Jersey',
+			'NM': 'New Mexico',
+			'NY': 'New York',
+			'NC': 'North Carolina',
+			# 'ND': 'North Dakota',
+			'OH': 'Ohio',
+			'OK': 'Oklahoma',
+			'OR': 'Oregon',
+			'PA': 'Pennsylvania',
+			'RI': 'Rhode Island',
+			'SC': 'South Carolina',
+			# 'SD': 'South Dakota',
+			'TN': 'Tennessee',
+			'TX': 'Texas',
+			'UT': 'Utah',
+			# 'VT': 'Vermont',
+			'VA': 'Virginia',
+			'WA': 'Washington',
+			'WV': 'West Virginia',
+			'WI': 'Wisconsin',
+			# 'WY':'Wyoming'
 			}
 
 
