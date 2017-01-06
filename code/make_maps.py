@@ -652,6 +652,29 @@ def make_histplot(df_list, state, labels):
 
 	return None
 
+def calculate_EG(df_list):
+#df_list comes from make_district_df()
+#Assumption at the moment: all the districts have equal population.
+
+        output = []
+
+        for df in df_list:
+                wasted_Rep = 0
+                wasted_Dem = 0
+                pct_vec = df['REP_PCT']/100
+                for x in pct_vec:
+
+                        if x < .5:
+                                wasted_Rep += x/len(df)
+                                wasted_Dem += (.5 - x)/len(df)
+
+                        if x > .5:
+                                wasted_Rep += (x-.5)/len(df)
+                                wasted_Dem +=(1-x)/len(df)
+
+                output.append(abs(wasted_Rep - wasted_Dem))
+        return output
+
 
 def make_barplot(df_list, state, labels):	
 	'''
