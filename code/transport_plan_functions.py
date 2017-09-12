@@ -24,7 +24,7 @@ import os
 
 
 def optimizeF(I, I_wgt, Finit, F_wgt, transp_map, DistMat):
-	'''
+	"""
 	This function computes the optimal office location given the current office 
 	location, transport map, distance matrix, and precinct locations.
 
@@ -40,7 +40,7 @@ def optimizeF(I, I_wgt, Finit, F_wgt, transp_map, DistMat):
 	OUTPUTS:
 	----------------------------------------------------------------------------
 	F_opt: numpy array, Mx3 array of office coordinates
-	'''
+	"""
 	F_opt = Finit.copy()
 
 	newtonSteps = 30
@@ -63,7 +63,7 @@ def optimizeF(I, I_wgt, Finit, F_wgt, transp_map, DistMat):
 
 
 def distance_metric(I_in, F_in, alphaW):
-	'''
+	"""
 	Computes pairwise 'distance' between precincts (I_in) and offices (F_in)
 	based on both geographic and demographic features. An office is close to a 
 	precinct along the demographic dimension if the district* demographic stats
@@ -79,7 +79,7 @@ def distance_metric(I_in, F_in, alphaW):
 	OUTPUTS:
 	----------------------------------------------------------------------------
 	DistMat: numpy array, pairwise distance between precincts and offices
-	'''
+	"""
 	# demographic distance
 	I_demopgraphics = np.atleast_2d(I_in[:, 2]).T
 	F_demographics = np.atleast_2d(F_in[:, 2]).T
@@ -95,7 +95,7 @@ def distance_metric(I_in, F_in, alphaW):
 
 
 def gradientDescentOT(Iin, I_wgt, Fin, F_wgt, reg=20, alphaW=0):
-	'''
+	"""
 	This function is a simple gradient descent optimization routine which 
 	minimizes the weighted sum of distances from precincts (I) and the 
 	congressional office (F). The cost function also includes a regularization 
@@ -115,7 +115,7 @@ def gradientDescentOT(Iin, I_wgt, Fin, F_wgt, reg=20, alphaW=0):
 	opt_district: numpy array, vector of districts for precincts in Iin
 	F: numpy array, Mx2 array giving optimal lat/lon coordinates for offices
 	cost: float, transport cost (sum of distances + regularization penalty term)
-	'''
+	"""
 	n_districts = len(Fin)
 	I = Iin
 	F = Fin
@@ -161,7 +161,7 @@ def gradientDescentOT(Iin, I_wgt, Fin, F_wgt, reg=20, alphaW=0):
 
 
 def _make_adjacency_matrix(df):
-	'''
+	"""
 	This function takes a geopandas DataFrame and computesan adjacency matrix 
 	from the polygons in the 'geometry' column. For states with many precincts,
 	this adjacency matrix can become quite large. Uses symmetry to speed up 
@@ -177,7 +177,7 @@ def _make_adjacency_matrix(df):
 	adj_matix: 	numpy array, binary array. Element (i,j) = 1 if the i_th
 				precint and j_th precint intersect or share a common 
 				boundary. Otherwise (i,j) = 0. 
-	'''	
+	"""
 	# build adjacency matrix
 	adj_matrix = np.zeros((len(df), len(df)))
 	for i, p in enumerate(df.geometry.values):		
@@ -188,7 +188,7 @@ def _make_adjacency_matrix(df):
 
 
 def check_contiguity(df, district_var):
-	'''
+	"""
 	This function takes an adjacency matrix and a vector denoting which
 	row/column belongs to common districts, and determines if the 
 	entire state is comprised of contiguous districts. 
@@ -202,7 +202,7 @@ def check_contiguity(df, district_var):
 	----------------------------------------------------------------------------
 	contiguity: boolean, Is True if all precincts are contiguous, and is false 
 				if any precinct is not contiguous
-	'''
+	"""
 	contig_true = True
 	i_d = 0
 	n_districts = len(np.unique(df[district_var]))
@@ -232,7 +232,7 @@ def check_contiguity(df, district_var):
 
 	
 def _computeSinkhorn(I_wgt, F_wgt, Distmat, reg, uin):
-	'''
+	"""
 	This function uses the Sinkhorn algorithm to update the transport map given
 	the current population weights, Distance map, regularization parameter, and 
 
@@ -250,7 +250,7 @@ def _computeSinkhorn(I_wgt, F_wgt, Distmat, reg, uin):
 	u: numpy array, vector resulting from projection step of Sinkhorn algorithm.
 	   Not important by itself. Using as uin in future calls is a big speed up.
 	cost: float, value of cost function evaluated at optimal transp_mat
-	'''
+	"""
 	# init data
 	Nini = len(I_wgt)
 	Nfin = len(F_wgt)
@@ -300,7 +300,7 @@ def _computeSinkhorn(I_wgt, F_wgt, Distmat, reg, uin):
 
 
 def _transportGradient(I, I_wgt, F, F_wgt, trasport_map, DistMat):
-	'''
+	"""
 	This function computes the gradient of transport problem in F. The gradient 
 	of F is a matrix showing how the transport cost changes as coordinates in F 
 	are peturbed.
@@ -319,7 +319,7 @@ def _transportGradient(I, I_wgt, F, F_wgt, trasport_map, DistMat):
 	OUTPUTS:
 	----------------------------------------------------------------------------
 	grad_F: numpy array, gradient of cost function with respect to F
-	'''
+	"""
 	grad_F = np.zeros(F.shape)	
 	
 	for j in range(len(F_wgt)):
@@ -340,7 +340,7 @@ def _transportGradient(I, I_wgt, F, F_wgt, trasport_map, DistMat):
 
 
 def unpack_multipolygons(geo_df, impute_vals=True):
-    '''
+    """
     Takes a vector of polygons and/or multipolygons. Returns an array of only 
     polygons by taking multipolygons and putting the underlying polygons in a 
     new vector. The "districts" vector contains info on the district for each 
@@ -358,9 +358,11 @@ def unpack_multipolygons(geo_df, impute_vals=True):
     ----------------------------------------------------------------------------
     geo: numpy array, array of shapely polygons only, (no multipolygons)
     dists: numpy array, vector contianing info on each polygon
-    '''
+    """
     repeat = False
     new_df = geo.GeoDataFrame()
+    new_df.crs = geo_df.crs
+
     cols = [c for c in geo_df.columns if 'POP' in c or 'VAP' in c or 'PRE' in c]
     geo_df[cols] = geo_df[cols].astype(float)
     scale = 1
@@ -386,8 +388,7 @@ def unpack_multipolygons(geo_df, impute_vals=True):
                 row.area = poly.area        
                 new_df = new_df.append(row)
 
-    poly_type = shapely.geometry.polygon.Polygon
-    poly_true = np.array([type(g) == poly_type for g in new_df.geometry.values])
+    poly_true = np.array([g == 'Polygon' for g in new_df.geom_type])
     if poly_true.any() is False:
         new_df = unpack_multipolygons(new_df)
 
@@ -395,7 +396,7 @@ def unpack_multipolygons(geo_df, impute_vals=True):
 
 
 def get_coords(T, xcoord=True):
-	'''
+	"""
 	Takes a single shapely polygon and returns a list of its x or y coordinates.
 
 	INPUTS
@@ -408,7 +409,7 @@ def get_coords(T, xcoord=True):
 	----------------------------------------------------------------------------	
 	patchx: list, sequence of x coordinates corresponding to patchy
 	patchy: list, sequence of y coordinates corresponding to patchx
-	'''
+	"""
 	# if type(T) == shapely.geometry.polygon.Polygon:
 	
 
@@ -426,7 +427,7 @@ def get_coords(T, xcoord=True):
 
 
 def make_folder(path):
-    '''
+    """
     This function makes directories on the fly at location 'path'. Checks first 
     to see if the directory is already there. If not, it makes the directory.
 
@@ -437,7 +438,7 @@ def make_folder(path):
     OUTPUTS
     ----------------------------------------------------------------------------    
     None
-    '''
+    """
     try: 
         # check to see if path already exists otherwise make folder
         os.makedirs(path)
