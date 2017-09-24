@@ -21,7 +21,7 @@ from bokeh.io import output_file
 from bokeh.models import ColumnDataSource as CDS
 from bokeh.plotting import *
 from bokeh.models import HoverTool
-from bokeh import mpl as bokeh_mpl
+# from bokeh import mpl as bokeh_mpl
 
 import transport_plan_functions as tpf
 
@@ -684,83 +684,83 @@ class MapPlotter(object):
 		return df
 
 
-def make_histplot(df_list, state, labels):
-	"""
-	Takes table output from make_district_df() and plots it. This allows us to 
-	have compact results even when there is a large number of districts. 
+# def make_histplot(df_list, state, labels):
+# 	"""
+# 	Takes table output from make_district_df() and plots it. This allows us to 
+# 	have compact results even when there is a large number of districts. 
 
-	INPUTS:
-	----------------------------------------------------------------------------
-	state: string, key of "states" dict, which pairs states with abbreviations
-	alphaW_list: list, list of alphaW parameters (scalars in [0,1])
-	file_end: ending of filename for figure	
+# 	INPUTS:
+# 	----------------------------------------------------------------------------
+# 	state: string, key of "states" dict, which pairs states with abbreviations
+# 	alphaW_list: list, list of alphaW parameters (scalars in [0,1])
+# 	file_end: ending of filename for figure	
 
-	OUTPUTS:
-	----------------------------------------------------------------------------
-	None
-	"""	
-	sns.set_style(style='white')
-	# mpl.rc('font',family='serif')
-	tpf.make_folder('../analysis/' + state)
+# 	OUTPUTS:
+# 	----------------------------------------------------------------------------
+# 	None
+# 	"""	
+# 	sns.set_style(style='white')
+# 	# mpl.rc('font',family='serif')
+# 	tpf.make_folder('../analysis/' + state)
 	
-	TOOLS = "save"
-	p_shell = figure(plot_width=675,
-			   plot_height=380,
-			   tools=TOOLS,
-			   toolbar_location='right')	
+# 	TOOLS = "save"
+# 	p_shell = figure(plot_width=675,
+# 			   plot_height=380,
+# 			   tools=TOOLS,
+# 			   toolbar_location='right')	
 
-	# initialize figure
-	titles = ['Approximate Distribution of Republican Voter Shares across Districts',
-			'Approximate Distribution of Black Population Shares across Districts',
-			'Approximate Distribution of Hispanic Population Shares across Districts']
+# 	# initialize figure
+# 	titles = ['Approximate Distribution of Republican Voter Shares across Districts',
+# 			'Approximate Distribution of Black Population Shares across Districts',
+# 			'Approximate Distribution of Hispanic Population Shares across Districts']
 
-	xlabels = ['District-Level Republican Voter Shares',
-			   'District-Level Black Population Shares',
-			   'District-Level Hispanic Population Shares']
+# 	xlabels = ['District-Level Republican Voter Shares',
+# 			   'District-Level Black Population Shares',
+# 			   'District-Level Hispanic Population Shares']
 
-	for ivar, var in enumerate(['REP_PCT','BLACK_PCT','HISPAN_PCT']):
-		fig, ax = sns.plt.subplots(1, 1, figsize=(13, 5), sharey=True)
-		bins = 10
-		kde_kws = {"shade": True, 'kernel':'gau', 'bw':.04}
+# 	for ivar, var in enumerate(['REP_PCT','BLACK_PCT','HISPAN_PCT']):
+# 		fig, ax = sns.plt.subplots(1, 1, figsize=(13, 5), sharey=True)
+# 		bins = 10
+# 		kde_kws = {"shade": True, 'kernel':'gau', 'bw':.04}
 
-		for i in range(1):
-			old_df = df_list[0]
-			new_df = df_list[1 + i]			
-			sns.distplot(old_df[var]/100, hist=False, bins=bins,
-						 kde_kws=kde_kws, ax=ax,
-						 label='2010 Districts', norm_hist=True
-						 )
+# 		for i in range(1):
+# 			old_df = df_list[0]
+# 			new_df = df_list[1 + i]			
+# 			sns.distplot(old_df[var]/100, hist=False, bins=bins,
+# 						 kde_kws=kde_kws, ax=ax,
+# 						 label='2010 Districts', norm_hist=True
+# 						 )
 			
-			sns.distplot(new_df[var]/100, hist=False, bins=bins, 
-						 kde_kws=kde_kws, ax=ax, 
-						 label='Optimal Districts', norm_hist=True
-						 )		
+# 			sns.distplot(new_df[var]/100, hist=False, bins=bins, 
+# 						 kde_kws=kde_kws, ax=ax, 
+# 						 label='Optimal Districts', norm_hist=True
+# 						 )		
 			
-			ax.set_xlim(0, 1)
-			ax.set_ylim(0, 1)
-			ax.set_xlabel(xlabels[ivar], fontsize=12)
-			ax.set_ylabel('Number of Districts', fontsize=12)
-			ax.legend(loc=0, ncol=1, fontsize=14)
+# 			ax.set_xlim(0, 1)
+# 			ax.set_ylim(0, 1)
+# 			ax.set_xlabel(xlabels[ivar], fontsize=12)
+# 			ax.set_ylabel('Number of Districts', fontsize=12)
+# 			ax.legend(loc=0, ncol=1, fontsize=14)
 
-			if i == 0:
-				p = bokeh_mpl.to_bokeh()
-				p.title.text = titles[ivar]
-				p.toolbar.logo = None
-				p.tools = p_shell.tools
-				p.plot_height = p.plot_height
-				p.plot_width = p_shell.plot_width
-				p.toolbar_location = p_shell.toolbar_location
-				p.xgrid.grid_line_color = None
-				p.ygrid.grid_line_color = None
+# 			if i == 0:
+# 				p = bokeh_mpl.to_bokeh()
+# 				p.title.text = titles[ivar]
+# 				p.toolbar.logo = None
+# 				p.tools = p_shell.tools
+# 				p.plot_height = p.plot_height
+# 				p.plot_width = p_shell.plot_width
+# 				p.toolbar_location = p_shell.toolbar_location
+# 				p.xgrid.grid_line_color = None
+# 				p.ygrid.grid_line_color = None
 
-				output_file("../analysis/"+state+"/"+var.lower()+"_kde.html")		
-				save(p)	
+# 				output_file("../analysis/"+state+"/"+var.lower()+"_kde.html")		
+# 				save(p)	
 
-		# filename = '../analysis/'+state+'/'+var+'_kde.pdf'
-		# fig.savefig(filename, bbox_inches='tight', dpi=100)
-		plt.close()
+# 		# filename = '../analysis/'+state+'/'+var+'_kde.pdf'
+# 		# fig.savefig(filename, bbox_inches='tight', dpi=100)
+# 		plt.close()
 
-	return None
+# 	return None
 
 def calculate_EG(df_list):
 #df_list comes from make_district_df()
@@ -879,7 +879,7 @@ if __name__ == '__main__':
 		dist_df_final['current_districts'] = False
 
 		# which columns to keep
-		columns = ['precinct_cost', 'current_districts', 'DEM', 'REP']
+		columns = ['precinct_cost', 'current_districts', 'DEM', 'REP', 'DEM_PCT', 'REP_PCT']
 		# columns += [c for c in dist_df0.columns if 'PRES' in c]
 		columns += [c for c in dist_df0.columns if 'POP_' in c]
 		
