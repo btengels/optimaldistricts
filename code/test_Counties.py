@@ -48,16 +48,19 @@ from sklearn.metrics.pairwise import euclidean_distances
 
 #Output: Linearization of the cost (**) about the current transportation plan.
 
-def linearized_County_Cost(Gamma,df):
+def linearized_County_Cost_Matrix(df):
     county_names = np.unique(df['COUNTY_NAM'])
-    output = np.zeros(Gamma.shape)
+    npcncts = len(df['COUNTY_NAM'])
+    output = np.zeros((npcncts,npcncts))
     for county in county_names:
         print county
         tmp = (df['COUNTY_NAM'] == county)
         N = np.sum(tmp)
-        tmp_Gamma = np.diag(tmp).dot(Gamma)
-        s = np.sum(tmp_Gamma,axis=0)
-        output += np.diag(tmp).dot(N*Gamma-s) #This uses a funny quirk, where subtracting a vector from a matrix will execute the operation to all the rows. May need some massaging to fix, but something like this should work.
+        output += np.diag(tmp) - np.outer(tmp,np.ones((1,npcncts)).dot(np.diag(tmp)))/N
+
+        #tmp_Gamma = np.diag(tmp).dot(Gamma)
+        #s = np.average(tmp_Gamma,axis=0)
+        #output += np.diag(tmp).dot(Gamma-s) #This uses a funny quirk, where subtracting a vector from a matrix will execute the operation to all the rows. May need some massaging to fix, but something like this should work.
     return output
 
 
@@ -112,6 +115,8 @@ F = F_loc0
 dist_mat = euclidean_distances(I_loc, F)
 Gamma,u,cost = tpf._computeSinkhorn(pcnct_wgt,F_wgt,dist_mat,reg,uinit)
 
+lin_county_mat = linearized_County_Cost_Matrix(df)
+
 
 for i_step in range(1,lloyd_steps):
     print i_step #debugging...
@@ -120,7 +125,7 @@ for i_step in range(1,lloyd_steps):
 
     for i in range(num_it):
         print i
-        lin_county = linearized_County_Cost(Gamma,df)
+        lin_county = lin_county_mat.dot(Gamma)
         cost_mat = county_param*lin_county + dist_mat
         delta_Gamma,u,cost = tpf._computeSinkhorn(pcnct_wgt,F_wgt,cost_mat,reg,u)
         Gamma = Gamma + delta_Gamma*step_size
