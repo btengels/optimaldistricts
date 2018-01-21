@@ -49,14 +49,16 @@ from sklearn.metrics.pairwise import euclidean_distances
 #Output: Linearization of the cost (**) about the current transportation plan.
 
 def linearized_County_Cost_Matrix(df):
+    print 'Computing County Map'
     county_names = np.unique(df['COUNTY_NAM'])
     npcncts = len(df['COUNTY_NAM'])
     output = np.zeros((npcncts,npcncts))
     for county in county_names:
-        print county
+        #print county
         tmp = (df['COUNTY_NAM'] == county)
         N = np.sum(tmp)
-        output += np.diag(tmp) - np.outer(tmp,np.ones((1,npcncts)).dot(np.diag(tmp)))/N
+        output += (np.diag(tmp) - np.outer(tmp,np.ones((1,npcncts)).dot(np.diag(tmp)))/N)/N
+        #Note: the extra N here is so that each county counts the same towards the cost.
 
         #tmp_Gamma = np.diag(tmp).dot(Gamma)
         #s = np.average(tmp_Gamma,axis=0)
@@ -71,14 +73,14 @@ def linearized_County_Cost_Matrix(df):
 #Which minimizes the standard transport distance plus the county distance
 #I'm going to assume that the working directory is one of the data-files folders at the moment.
 
-df = pd.read_pickle('../Data-Files/PA/precinct_data.p')
+df = pd.read_pickle('../Data-Files/CO/precinct_data.p')
 
 
 
 
-county_param = .001 #May need to be normalized
-step_size = .1 #Step size for linearized county cost steps
-reg=.5 #??
+county_param = 1000 #10000 works well for CO. Normalization is non-obvious.
+step_size = .5 #Step size for linearized county cost steps
+reg=10 #.5?
 
 
 
@@ -106,9 +108,11 @@ for i in range(n_districts):
 
 
 
-num_it = 10 #Number of iterations for the county cost. Guess value: in tens
-lloyd_steps = 5 #30
-lineSearchN = 3 #20
+num_it = 30 #Number of iterations for the county cost. Guess value: in tens
+lloyd_steps = 30 #30
+lineSearchN = 20 #20
+lineSearchRange = 1
+stepsize_vec = np.linspace(0,lineSearchRange,lineSearchN)
 uinit = np.ones(len(I_wgt))/len(I_wgt)
 F = F_loc0
 
@@ -119,33 +123,45 @@ lin_county_mat = linearized_County_Cost_Matrix(df)
 
 
 for i_step in range(1,lloyd_steps):
-    print i_step #debugging...
+    #print i_step #debugging...
+    print 'running Lloyd\'s Algorithm'
     #At each step find the the optimal transportation map Gamma given fixed F
     dist_mat = euclidean_distances(I_loc, F)
 
     for i in range(num_it):
-        print i
+        #print i
         lin_county = lin_county_mat.dot(Gamma)
         cost_mat = county_param*lin_county + dist_mat
         delta_Gamma,u,cost = tpf._computeSinkhorn(pcnct_wgt,F_wgt,cost_mat,reg,u)
         Gamma = Gamma + delta_Gamma*step_size
 
-    #Then step to the best F given fixed transportation map Gamma
-    Grad = tpf._transportGradient(pcnct_loc, pcnct_wgt, F, F_wgt, Gamma, dist_mat)
+    tmp_dist = np.array([np.argmax(i) for i in Gamma])
+    for i in range(n_districts):
+        tmp_wgt = I_wgt*(tmp_dist ==i)
+        F[i,0] = np.sum(I_loc[:,0]*tmp_wgt)/np.sum(tmp_wgt)
+        F[i,1] = np.sum(I_loc[:,1]*tmp_wgt)/np.sum(tmp_wgt)
 
-    # find optimal step size (will step in direction of gradient)
-    for j in range(lineSearchN):
-        DistMat = euclidean_distances(Iloc,F-stepsize_vec[j]*Grad)
-    	cost = np.sum(DistMat,Gamma)
-        costVec[j] = cost 
-    
-    # find the optimal step size and adjust F accordingly
-    ind = np.argmin(costVec)
-    # print(np.min(costVec))
-    F -= stepsize_vec[ind]*Grad
+    #F[:,0] = Gamma.T.dot(I_loc[:,0]*I_wgt*7)/np.sum(Gamma,axis=0)
+    #F[:,1] = Gamma.T.dot(I_loc[:,1]*I_wgt*7)/np.sum(Gamma,axis=0)
 
 
-df['district_final'] =	np.array([np.argmax(i) for i in transp_map])
+#    #Then step to the best F given fixed transportation map Gamma
+#    Grad = tpf._transportGradient(pcnct_loc, pcnct_wgt, F, F_wgt, Gamma, dist_mat)
+#
+#    # find optimal step size (will step in direction of gradient)
+#    costVec = np.zeros(lineSearchN)
+#    for j in range(lineSearchN):
+#        DistMat = euclidean_distances(I_loc,F-stepsize_vec[j]*Grad)
+#    	cost = np.sum(DistMat*Gamma)
+#        costVec[j] = cost 
+#    
+#    # find the optimal step size and adjust F accordingly
+#    ind = np.argmin(costVec)
+#    # print(np.min(costVec))
+#    F -= stepsize_vec[ind]*Grad
+
+
+df['district_final'] =	np.array([np.argmax(i) for i in Gamma])
 plotter = MM.MapPlotter(df)
 
 filename = 'before.png'
@@ -155,18 +171,43 @@ current_dists = df['CD_2010'].values.astype(int)
 n_districts = len(df.CD_2010.unique())
 
 # define the colormap
-cmap = plt.cm.Paired
+cmap = plt.cm.jet
 cmaplist = [cmap(i) for i in range(cmap.N)]		
 palette =[cmaplist[i] for i in range(0, cmap.N, int(cmap.N/n_districts))]	
 
 
 
 colors = np.array([palette[i] for i in current_dists])
-patches = plotter.plot_state(df, colors, ax, fig, filename)
+fig, ax = plt.subplots(1, 1, subplot_kw=dict(aspect='equal'))
+
+patches = []
+for poly in df.geometry.values:
+    patches.append(Polygon(np.asarray(poly.exterior)))
+patches = PatchCollection(patches)
+patches.set_lw(.1)
+patches.set_color(colors)
+
+ax.add_collection(patches,autolim=True)
+ax.autoscale_view()
+		
+ax.set_yticklabels([])
+ax.set_xticklabels([])
+fig.savefig(filename, bbox_inches='tight', dpi=100)
+plt.close()			
+
+
+
+
+
+#patches = plotter.plot_state(df, colors, ax, fig, filename)
 
 filename = 'after.png'
-colors = np.array([palette[i] for i in df['final_district']])
+colors = np.array([palette[i] for i in df['district_final']])
 patches.set_color(colors)
+# plot stars for office locations
+for i in range(len(F)):
+	ax.scatter(F[i, 0], F[i, 1], color='black', marker='*', s=30, alpha=1)	
+
 
 fig.savefig(filename, bbox_inches='tight', dpi=300)
 

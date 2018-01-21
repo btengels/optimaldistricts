@@ -597,7 +597,7 @@ class MapPlotter(object):
 		return patches
 
 
-	def _make_palette(self, cmap=plt.cm.Paired, hex=False):
+	def _make_palette(self, cmap=plt.cm.jet, hex=False):
 		"""
 		Takes matplotlib cmap object and generates a palette of n equidistant points
 		over the cmap spectrum, returned as a list. 
