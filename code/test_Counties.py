@@ -121,10 +121,10 @@ Gamma,u,cost = tpf._computeSinkhorn(pcnct_wgt,F_wgt,dist_mat,reg,uinit)
 
 lin_county_mat = linearized_County_Cost_Matrix(df)
 
-
+print 'running Lloyd\'s Algorithm'
 for i_step in range(1,lloyd_steps):
     #print i_step #debugging...
-    print 'running Lloyd\'s Algorithm'
+    
     #At each step find the the optimal transportation map Gamma given fixed F
     dist_mat = euclidean_distances(I_loc, F)
 
