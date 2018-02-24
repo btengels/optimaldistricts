@@ -1,0 +1,12 @@
+Auction algorithm:
+
+normalize rows of transportation plan
+list each column in decreasing order
+Add precincts iteratively (district with least current population gets to pick highest on its list that is left)
+Districts add until some threshold is reached (average*(1.01))
+Then just add argmax of whatever is left over
+
+
+Also, remove counties that have population greater than 1/3 of the average district size
+
+Finally, explore VTD divisions. Aggregate after removing VTD ## or PCT ## or PCT ##?

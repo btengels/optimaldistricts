@@ -255,7 +255,7 @@ def _computeSinkhorn(I_wgt, F_wgt, Distmat, reg, uin):
 	Nini = len(I_wgt)
 	Nfin = len(F_wgt)
 
-	numItermax = 200
+	numItermax = 1000#This was 200, RWM 1/23/18
 
 	# assume that no distances are null except the diagonal of Distmat
 	u = uin.copy()
@@ -269,7 +269,7 @@ def _computeSinkhorn(I_wgt, F_wgt, Distmat, reg, uin):
 	# project map onto constraints repeatedly to find optimal transport map
 	count = 0
 	err=1
-	while (err > 1e-5 and count < numItermax):
+	while (err > 1e-7 and count < numItermax):
 		if np.logical_or(np.any(np.dot(K.T, u) == 0), np.isnan(np.sum(u))):
 			# we have reached machine precision
 			# come back to previous solution and quit loop
@@ -289,6 +289,7 @@ def _computeSinkhorn(I_wgt, F_wgt, Distmat, reg, uin):
 			# print(err)
 		count += 1
 
+        print 'final count is ' + str(count)
 	# after convergence is reached, back out transport map
 	transport_map = np.atleast_2d(u).T*K*v
 	temp = np.log(transport_map)

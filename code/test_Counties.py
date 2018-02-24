@@ -56,8 +56,12 @@ def linearized_County_Cost_Matrix(df):
     for county in county_names:
         #print county
         tmp = (df['COUNTY_NAM'] == county)
+        county_pop = tmp.dot(df.POPULATION.values)
         N = np.sum(tmp)
-        output += (np.diag(tmp) - np.outer(tmp,np.ones((1,npcncts)).dot(np.diag(tmp)))/N)/N
+        if county_pop < .33*np.sum(df.POPULATION.values)/len(np.unique(df.CD_2010)):
+            output += (np.diag(tmp) - np.outer(tmp,np.ones((1,npcncts)).dot(np.diag(tmp)))/N)#/N?
+        else:
+            print 'skipping ' + county
         #Note: the extra N here is so that each county counts the same towards the cost.
 
         #tmp_Gamma = np.diag(tmp).dot(Gamma)
@@ -73,14 +77,14 @@ def linearized_County_Cost_Matrix(df):
 #Which minimizes the standard transport distance plus the county distance
 #I'm going to assume that the working directory is one of the data-files folders at the moment.
 
-df = pd.read_pickle('../Data-Files/CO/precinct_data.p')
+df = pd.read_pickle('../Data-Files/PA/precinct_data.p')
 
 
 
 
 county_param = 1000 #10000 works well for CO. Normalization is non-obvious.
-step_size = .5 #Step size for linearized county cost steps
-reg=10 #.5?
+step_size = .1 #Step size for linearized county cost steps
+reg= 20 #.5?
 
 
 
@@ -108,8 +112,8 @@ for i in range(n_districts):
 
 
 
-num_it = 30 #Number of iterations for the county cost. Guess value: in tens
-lloyd_steps = 30 #30
+num_it = 10 #Number of iterations for the county cost. Guess value: in tens
+lloyd_steps = 20 #30
 lineSearchN = 20 #20
 lineSearchRange = 1
 stepsize_vec = np.linspace(0,lineSearchRange,lineSearchN)
@@ -118,6 +122,9 @@ F = F_loc0
 
 dist_mat = euclidean_distances(I_loc, F)
 Gamma,u,cost = tpf._computeSinkhorn(pcnct_wgt,F_wgt,dist_mat,reg,uinit)
+
+print np.sum(Gamma,axis=0)
+print np.sum(Gamma,axis=1)
 
 lin_county_mat = linearized_County_Cost_Matrix(df)
 
@@ -133,7 +140,8 @@ for i_step in range(1,lloyd_steps):
         lin_county = lin_county_mat.dot(Gamma)
         cost_mat = county_param*lin_county + dist_mat
         delta_Gamma,u,cost = tpf._computeSinkhorn(pcnct_wgt,F_wgt,cost_mat,reg,u)
-        Gamma = Gamma + delta_Gamma*step_size
+        #print np.sum(Gamma,axis=0)
+        Gamma = (1-step_size)*Gamma + delta_Gamma*step_size
 
     tmp_dist = np.array([np.argmax(i) for i in Gamma])
     for i in range(n_districts):
@@ -160,8 +168,37 @@ for i_step in range(1,lloyd_steps):
 #    # print(np.min(costVec))
 #    F -= stepsize_vec[ind]*Grad
 
+#This assigns districts according to argmax. This is ok for some settings, but it probably isn't sufficient for legal muster. Population varies on the 10% range, which is too high.
 
-df['district_final'] =	np.array([np.argmax(i) for i in Gamma])
+
+
+Gamma_Normalized = Gamma.copy()
+for i in range(len(Gamma)):
+    Gamma_Normalized[i,:] = Gamma_Normalized[i,:]/np.sum(Gamma_Normalized[i,:])
+
+tmpI = np.argsort(-Gamma_Normalized,axis=0)
+currentPop = np.zeros(len(F_wgt))
+TargetPop = .998*np.sum(df['POPULATION'])/len(F_wgt) #Allowing 1% total population variance
+pcncts_picked = set()   
+final_Districts = -np.ones(len(Gamma))
+pop_Vec = df.POPULATION.values
+
+while np.min(currentPop)< TargetPop:
+    j=0
+    dist = np.argmin(currentPop) #District with lowest current population picks next
+    while tmpI[j,dist] in pcncts_picked:
+        j += 1
+    pcncts_picked.add(tmpI[j,dist])
+    final_Districts[tmpI[j,dist]] = dist
+    currentPop[dist] += pop_Vec[tmpI[j,dist]]
+
+df['district_final'] =	((final_Districts < -.5)*np.array([np.argmax(i) for i in Gamma]) + (final_Districts > -.5)*final_Districts).astype(int)
+
+df['district_final_argmax_method'] = np.array([np.argmax(i) for i in Gamma])
+print np.sum(Gamma,axis=0)
+
+
+
 plotter = MM.MapPlotter(df)
 
 filename = 'before.png'
@@ -187,7 +224,21 @@ patches = PatchCollection(patches)
 patches.set_lw(.1)
 patches.set_color(colors)
 
+county_df = df.dissolve(by='COUNTY_NAM')
+county_patches = []
+for poly in county_df.geometry.values:
+    county_patches.append(Polygon(np.asarray(poly.exterior)))
+county_patches = PatchCollection(county_patches)
+county_patches.set_lw(1)
+county_patches.set_edgecolor((0,0,0,1))
+county_patches.set_facecolor((0,0,0,0))
+county_patches.set_alpha(None)
+
+
+
+
 ax.add_collection(patches,autolim=True)
+ax.add_collection(county_patches,autolim=True)
 ax.autoscale_view()
 		
 ax.set_yticklabels([])
@@ -203,6 +254,18 @@ plt.close()
 
 filename = 'after.png'
 colors = np.array([palette[i] for i in df['district_final']])
+patches.set_color(colors)
+# plot stars for office locations
+for i in range(len(F)):
+	ax.scatter(F[i, 0], F[i, 1], color='black', marker='*', s=30, alpha=1)	
+
+
+fig.savefig(filename, bbox_inches='tight', dpi=300)
+plt.close()
+
+
+filename = 'after_argmax.png'
+colors = np.array([palette[i] for i in df['district_final_argmax_method']])
 patches.set_color(colors)
 # plot stars for office locations
 for i in range(len(F)):
